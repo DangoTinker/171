@@ -1,0 +1,83 @@
+
+create table supplier(
+	sno varchar2(10) not null primary key,
+	sname varchar2(10),
+	simply varchar2(10),
+	address varchar2(20),
+	sphone varchar2(20),
+	mail varchar2(20)
+)
+
+
+create table contacter(
+	cno varchar2(10) not null primary key,
+	sno varchar2(10),
+	cname varchar2(10),
+	phone varchar2(20),
+	constraint cfk1 foreign key(sno) references supplier(sno)
+)
+
+/*
+create talbe contact(
+	sno varchar2(10),
+	cno varchar2(10),
+	constraint cpk primary key(sno,cno),
+  	constraint cfk1 foreign key(sno) references supplier(sno),
+  	constraint cfk2 foreign key(cno) references ccontacter(cno)
+)
+*/
+
+
+create table goods(
+	gno varchar2(10) not null primary key,
+	sno varchar2(10),
+	gname varchar2(10),
+	simply varchar2(20),
+	price numeric(3),
+	constraint sfk1 foreign key(sno) references supplier(sno)
+)
+
+
+/*
+create table supply(
+	sno varchar2(10),
+	gno varchar2(10),
+	price numeric(3),
+	constraint spk primary key(sno,gno),
+  	constraint sfk1 foreign key(sno) references supplier(sno),
+  	constraint sfk2 foreign key(cno) references goods(gno)	
+)
+*/
+
+create table staff(
+	stno varchar2(10) not null primary key,
+	stname varchar2(10),
+	stlevel varchar2(10),
+	phone varchar2(20),
+	salary numeric(3)
+)
+
+create table purchaseList(
+	lno varchar2(10) not null primary key,
+	stno varchar2(10),
+	count int,
+	total numeric(3),
+	time varchar2(10),
+	constraint plfk1 foreign key(stno) references staff(stno)
+)
+
+create table purchase(
+	lno varchar2(10),
+	gno varchar2(10),
+	count int,
+	constraint pk1 foreign key(lno) references purchaseList(lno),
+  	constraint pfk2 foreign key(gno) references goods(gno)	
+)
+
+create table userMessage(
+	username varchar2(10) not null primary key,
+	password varchar2(10) not null,
+	role varchar2(10)
+)
+
+
