@@ -19,7 +19,9 @@ public class SupplierFrame extends JFrame{
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
-	private int oldRowCount;
+//	private int oldRowCount;
+	
+	
 	private JLabel snoLabel;
 	private JLabel snameLabel;
 	private JLabel simplyLabel;
@@ -38,7 +40,7 @@ public class SupplierFrame extends JFrame{
 	public SupplierFrame() {
 		
 		try {
-			dao=new SupplierDao();
+			dao=SupplierDao.getInstance();
 			list=(LinkedList<Tranable>)dao.queryAll();
 			
 		}catch(Exception e) {
@@ -54,7 +56,7 @@ public class SupplierFrame extends JFrame{
 		this.add(panel);
 		panel.add(table.getTableHeader());
 		panel.add(table);
-		oldRowCount=table.getRowCount();
+//		oldRowCount=table.getRowCount();
 		
 		snoLabel=new JLabel("±àºÅ");
 		snameLabel=new JLabel("Ãû×Ö");
@@ -95,9 +97,9 @@ public class SupplierFrame extends JFrame{
 		public void mousePressed(MouseEvent e) {
 			switch (((JButton)e.getSource()).getText()) {
 			case "Ìí¼Ó":{
-				Supplier temp=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
+				
 				try {
-					insert(temp);
+					insert();
 				}catch(Exception ex) {
 					new NoticeFrame("Ìí¼ÓÊ§°Ü"+ex.getMessage());
 				}
@@ -163,7 +165,8 @@ public class SupplierFrame extends JFrame{
 		tableModel.removeRow(n);
 		return i;
 	}
-	private int insert(Supplier temp) throws Exception{
+	private int insert() throws Exception{
+		Supplier temp=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
 		int n=dao.insertOne(temp);
 		if(n==0) {
 			return n;

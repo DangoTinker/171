@@ -9,6 +9,13 @@ public class SupplierDao {
 	private DbOperation db;
 	private Object[] name;
 	private int count;
+	private static SupplierDao s;
+	public static SupplierDao getInstance() throws Exception{
+		if(s==null) {
+			s=new SupplierDao();
+		}
+		return s;
+	}
 	
 	public Object[] getName() {
 		return name;
@@ -29,7 +36,7 @@ public class SupplierDao {
 		name[4]="µç»°";
 		name[5]="ÓÊ¼þ";
 		
-		db=new DbOperation();
+		db=DbOperation.getInstance();
 		db.linkDb();
 		
 	}
@@ -84,7 +91,7 @@ public class SupplierDao {
 	}
 	
 	public  int updateOne(Supplier o,Supplier n) throws Exception{
-		Object[] temp=new Object[7];
+		Object[] temp=new Object[count+1];
 		temp[0]=n.getSno();
 		temp[1]=n.getSname();
 		temp[2]=n.getSimply();
@@ -92,7 +99,6 @@ public class SupplierDao {
 		temp[4]=n.getPhone();
 		temp[5]=n.getMail();
 		temp[6]=o.getSno();
-		System.out.println(temp[0]+" "+temp[1]+" "+temp[2]+" "+temp[3]+" "+temp[4]+" "+temp[5]);
 		return db.updateOne("update supplier set sno=?,sname=?,simply=?,address=?,sphone=?,mail=? where sno=?", temp);
 	}
 	

@@ -12,7 +12,7 @@ public class Goods implements Tranable{
 	
 	@Override
 	public Object[] tran() {
-		Object[] o=new Object[6];
+		Object[] o=new Object[5];
 		o[0]=gno;o[1]=sno;o[2]=gname;o[3]=simply;o[4]=price;
 		return o;
 	}

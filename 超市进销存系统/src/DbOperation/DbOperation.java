@@ -5,13 +5,17 @@ import java.sql.*;
 public class DbOperation {
 	private Connection conn;
 	PreparedStatement pstmt;
+	
+	private static DbOperation db=new DbOperation();
+	public static DbOperation getInstance() {
+		return db;
+	}
+	
+	
 	public DbOperation() {
 		
 	}
-	public DbOperation(Connection conn) {
-		this.conn=conn;
-		
-	}
+	
 	public void linkDb(InputStream input) throws Exception{
 		Properties props=new Properties();
 		props.load(input);
