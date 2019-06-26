@@ -13,13 +13,14 @@ public class StaffDao {
 	public StaffDao() throws Exception{
 		db=DbOperation.getInstance();
 		db.linkDb();
-		name=new Object[5];
+		name=new Object[6];
 		name[0]="编号";
 		name[1]="姓名";
 		name[2]="级别";
 		name[3]="电话";
 		name[4]="工资";
-		count=5;
+		name[5]="头像";
+		count=6;
 	}
 	
 	public LinkedList<Staff> queryAll() throws Exception{
@@ -27,7 +28,7 @@ public class StaffDao {
 		ResultSet rs=db.query("select * from staff", o);
 		LinkedList<Staff> ls=new LinkedList<Staff>();
 		while(rs.next()) {
-			ls.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary")));
+			ls.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("pic")).getBinaryStream()).readAllBytes()));
 			
 		}
 		return ls;
@@ -51,7 +52,7 @@ public class StaffDao {
 	}
 	
 	public int updateOne(Staff o,Staff n) throws Exception{
-		Object[] temp=new Object[count+1];
+		Object[] temp=new Object[count];
 		temp[0]=n.getStno();
 		temp[1]=n.getStname();
 		temp[2]=n.getStlevel();
