@@ -7,13 +7,16 @@ public class Staff implements Tranable{
 	private String stlevel;
 	private String phone;
 	private double salary;
+	private byte[] icon;
 	
-	public Staff(String a,String b,String c,String d,double e) {
+	
+	public Staff(String a,String b,String c,String d,double e,byte[] f) {
 		stno=a;
 		stname=b;
 		stlevel=c;
 		phone=d;
 		salary=e;
+		icon=f;
 	}
 	
 	
@@ -52,14 +55,24 @@ public class Staff implements Tranable{
 	@Override
 	public Object[] tran() {
 		// TODO 自动生成的方法存根
-		Object[] o=new Object[5];
+		Object[] o=new Object[6];
 		o[0]=stno;
 		o[1]=stname;
 		o[2]=stlevel;
 		o[3]=phone;
 		o[4]=salary;
-
+		o[5]=icon;
 		return o;
+	}
+
+
+	public byte[] getIcon() {
+		return icon;
+	}
+
+
+	public void setIcon(byte[] icon) {
+		this.icon = icon;
 	}
 	
 	
