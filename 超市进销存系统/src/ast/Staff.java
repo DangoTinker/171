@@ -62,6 +62,7 @@ public class Staff implements Tranable{
 		o[3]=phone;
 		o[4]=salary;
 		o[5]=icon;
+		
 		return o;
 	}
 

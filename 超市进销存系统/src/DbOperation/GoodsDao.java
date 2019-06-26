@@ -1,7 +1,7 @@
 package DbOperation;
 
 import java.sql.ResultSet;
-import java.util.LinkedList;
+import java.util.*;
 
 import ast.Goods;
 import ast.Supplier;
@@ -40,7 +40,7 @@ public class GoodsDao {
 		return count;
 	}
 	
-	public LinkedList queryAll( ) throws Exception{
+	public List queryAll( ) throws Exception{
 		LinkedList<Goods> o=new LinkedList<Goods>();
 		ResultSet rs=db.query("select * from goods", new Object[0]);
 		while(rs.next()) {

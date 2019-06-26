@@ -49,7 +49,6 @@ public class SupplierFrame extends JFrame{
 		
 		Object[] o=dao.getName();
 		tableModel=AstMethod.makeTableModel(o,list);
-		System.out.println(list.size());
 		
 		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
