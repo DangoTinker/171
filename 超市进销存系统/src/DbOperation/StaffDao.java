@@ -9,6 +9,15 @@ public class StaffDao {
 	private DbOperation db;
 	private Object[] name;
 	private int count;
+	private static StaffDao s=null;
+	
+	public static StaffDao getInstance() throws Exception{
+		if(s==null) {
+			return new StaffDao();
+		}
+		return s;
+	}
+	
 	
 	public StaffDao() throws Exception{
 		db=DbOperation.getInstance();
