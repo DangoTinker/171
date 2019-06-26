@@ -1,7 +1,7 @@
 package DbOperation;
 
 import java.sql.ResultSet;
-import java.util.LinkedList;
+import java.util.*;
 
 import ast.Staff;
 
@@ -18,6 +18,21 @@ public class StaffDao {
 		return s;
 	}
 	
+	public Object[] getName() {
+		Object[] o=new Object[count];
+		o[0]="编号";
+		o[1]="姓名";
+		o[2]="级别";
+		o[3]="电话";
+		o[4]="工资";
+		o[5]="头像";
+		return o;
+	}
+	
+	public int getCount(){
+		return count;
+	}
+	
 	
 	public StaffDao() throws Exception{
 		db=DbOperation.getInstance();
@@ -32,12 +47,12 @@ public class StaffDao {
 		count=6;
 	}
 	
-	public LinkedList<Staff> queryAll() throws Exception{
+	public List queryAll() throws Exception{
 		Object[] o=new Object[0];
 		ResultSet rs=db.query("select * from staff", o);
 		LinkedList<Staff> ls=new LinkedList<Staff>();
 		while(rs.next()) {
-			ls.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("pic")).getBinaryStream()).readAllBytes()));
+			ls.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes()));
 			
 		}
 		return ls;
@@ -48,15 +63,22 @@ public class StaffDao {
 	
 	public int insertOne(Staff staff) throws Exception{
 		Object[] o=staff.tran();
-		return db.updateOne("insert into staff values(?,?,?,?,?)", o);
+		return db.updateOne("insert into staff values(?,?,?,?,?,?)", o);
 	}
 	
 	public int deleteOne(Staff staff) throws Exception{
 		Object[] o=staff.tran();
 		Object[] temp=new Object[1];
+		
+		Object[] test=new Object[count-1];
+		
+		for(int i=0;i<count-1;i++) {
+			test[i]=o[i];
+		}
+		
 		temp[0]=o[0];
 		db.updateOne("delete from purchaseList where stno=?",temp);
-		return db.updateOne("delete from staff where stno=? and stname=? and stlevel=? and phone=? and salary=?", o);
+		return db.updateOne("delete from staff where stno=? and stname=? and stlevel=? and phone=? and salary=? ", test);
 		
 	}
 	

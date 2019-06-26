@@ -41,7 +41,7 @@ public class SupplierDao {
 		
 	}
 	
-	public  LinkedList queryAll() throws Exception{
+	public  List queryAll() throws Exception{
 		LinkedList<Supplier> supplier=new LinkedList<Supplier>();
 		ResultSet rs=db.query("select * from supplier", new Object[0]);
 		while(rs.next()) {

@@ -18,11 +18,14 @@ public class MainFrame extends JFrame{
 		JPanel panel=new JPanel();
 		JButton supplierButton=new JButton("供应商管理");
 		JButton goodsButton=new JButton("商品管理");
+		JButton staffButton=new JButton("员工管理");
 		this.add(panel);
 		panel.add(supplierButton);
 		panel.add(goodsButton);
+		panel.add(staffButton);
 		supplierButton.addMouseListener(new ButtonListener());
 		goodsButton.addMouseListener(new ButtonListener());
+		staffButton.addMouseListener(new ButtonListener());
 		this.setVisible(true);
 	}
 	
@@ -42,6 +45,10 @@ public class MainFrame extends JFrame{
 				case "商品管理":{
 					new GoodsFrame(username);
 					break;
+				}
+				
+				case "员工管理":{
+					new StaffFrame();
 				}
 			
 			}
