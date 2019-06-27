@@ -19,13 +19,19 @@ public class MainFrame extends JFrame{
 		JButton supplierButton=new JButton("供应商管理");
 		JButton goodsButton=new JButton("商品管理");
 		JButton staffButton=new JButton("员工管理");
+		JButton userAddButton=new JButton("添加用户");
+		JButton userStaffButton=new JButton("个人信息");
 		this.add(panel);
 		panel.add(supplierButton);
 		panel.add(goodsButton);
 		panel.add(staffButton);
+		panel.add(userAddButton);
+		panel.add(userStaffButton);
 		supplierButton.addMouseListener(new ButtonListener());
 		goodsButton.addMouseListener(new ButtonListener());
 		staffButton.addMouseListener(new ButtonListener());
+		userAddButton.addMouseListener(new ButtonListener());
+		userStaffButton.addMouseListener(new ButtonListener());
 		this.setVisible(true);
 	}
 	
@@ -48,9 +54,28 @@ public class MainFrame extends JFrame{
 				}
 				
 				case "员工管理":{
-					new StaffFrame();
+					if(root)
+						new StaffFrame(username);
+					else
+						new userStaffFrame(username);
+					break;
 				}
-			
+				
+				case "添加用户":{
+					if(root) {
+						new userAddFrame();
+					}
+					else {
+						new NoticeFrame("权限不足");
+					}
+					break;
+				}
+				
+				case "个人信息":{
+					new userStaffFrame(username);
+					break;
+				}
+				
 			}
 		}
 	}

@@ -19,14 +19,8 @@ public class StaffDao {
 	}
 	
 	public Object[] getName() {
-		Object[] o=new Object[count];
-		o[0]="编号";
-		o[1]="姓名";
-		o[2]="级别";
-		o[3]="电话";
-		o[4]="工资";
-		o[5]="头像";
-		return o;
+		
+		return name;
 	}
 	
 	public int getCount(){
@@ -35,8 +29,6 @@ public class StaffDao {
 	
 	
 	public StaffDao() throws Exception{
-		db=DbOperation.getInstance();
-		db.linkDb();
 		name=new Object[6];
 		name[0]="编号";
 		name[1]="姓名";
@@ -45,6 +37,10 @@ public class StaffDao {
 		name[4]="工资";
 		name[5]="头像";
 		count=6;
+		db=DbOperation.getInstance();
+		if(!db.isLinked())
+			db.linkDb();
+		
 	}
 	
 	public List queryAll() throws Exception{
@@ -59,7 +55,24 @@ public class StaffDao {
 		
 		
 	}
-	
+	public List queryOne(String username) throws Exception{
+		Object[] o=new Object[1];
+		o[0]=username;
+		LinkedList<Staff> ls=new LinkedList<Staff>();
+		ResultSet rs=db.query("select * from staff where stno=?", o);
+		if(!rs.next()) {
+			return ls;
+		}
+		String stno=rs.getString("stno");
+		String stname=rs.getString("stname");
+		String stlevel=rs.getString("stlevel");
+		String phone=rs.getString("phone");
+		double salary=rs.getDouble("salary");
+		byte[] icon=(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes();
+		
+		ls.add(new Staff(stno,stname,stlevel,phone,salary,icon));
+		return ls;
+	}
 	
 	public int insertOne(Staff staff) throws Exception{
 		Object[] o=staff.tran();

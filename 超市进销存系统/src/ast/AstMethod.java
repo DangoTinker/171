@@ -18,7 +18,7 @@ public class AstMethod {
 		return new DefaultTableModel(o,name);
 	}
 	public static boolean isRoot(String username) throws Exception{
-		DbOperation db=new DbOperation();
+		DbOperation db=DbOperation.getInstance();
 		db.linkDb();
 		Object[] o=new Object[1];
 		o[0]=username;

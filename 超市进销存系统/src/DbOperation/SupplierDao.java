@@ -37,7 +37,8 @@ public class SupplierDao {
 		name[5]="ÓÊ¼þ";
 		
 		db=DbOperation.getInstance();
-		db.linkDb();
+		if(!db.isLinked())
+			db.linkDb();
 		
 	}
 	
