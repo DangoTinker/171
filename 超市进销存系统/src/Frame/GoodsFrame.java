@@ -44,6 +44,7 @@ public class GoodsFrame extends JFrame{
 	
 	
 	public GoodsFrame(String u) {
+		this.setSize(500, 300);
 		username=u;
 		try {
 			dao=GoodsDao.getInstance();
@@ -92,6 +93,8 @@ public class GoodsFrame extends JFrame{
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	
