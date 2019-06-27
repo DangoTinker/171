@@ -20,6 +20,7 @@ public class MainFrame extends JFrame{
 		JButton supplierButton=new JButton("供应商管理");
 		JButton goodsButton=new JButton("商品管理");
 		JButton staffButton=new JButton("员工管理");
+		JButton contacterButton=new JButton("联系人管理");
 		JButton userAddButton=new JButton("添加用户");
 		JButton userStaffButton=new JButton("个人信息");
 		this.add(panel);
@@ -28,11 +29,13 @@ public class MainFrame extends JFrame{
 		panel.add(staffButton);
 		panel.add(userAddButton);
 		panel.add(userStaffButton);
+		panel.add(contacterButton);
 		supplierButton.addMouseListener(new ButtonListener());
 		goodsButton.addMouseListener(new ButtonListener());
 		staffButton.addMouseListener(new ButtonListener());
 		userAddButton.addMouseListener(new ButtonListener());
 		userStaffButton.addMouseListener(new ButtonListener());
+		contacterButton.addMouseListener(new ButtonListener());
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
@@ -76,6 +79,10 @@ public class MainFrame extends JFrame{
 				
 				case "个人信息":{
 					new userStaffFrame(username);
+					break;
+				}
+				case "联系人管理":{
+					new ContacterFrame(username);
 					break;
 				}
 				
