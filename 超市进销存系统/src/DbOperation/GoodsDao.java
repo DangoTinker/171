@@ -30,7 +30,8 @@ public class GoodsDao {
 		
 		
 		db=DbOperation.getInstance();
-		db.linkDb();
+		if(!db.isLinked())	
+			db.linkDb();
 	}
 	
 	public Object[] getName() {

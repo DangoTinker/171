@@ -5,7 +5,7 @@ import java.sql.*;
 public class DbOperation {
 	private Connection conn;
 	PreparedStatement pstmt;
-	
+	private boolean isLinked=false;
 	private static DbOperation db=new DbOperation();
 	public static DbOperation getInstance() {
 		return db;
@@ -25,15 +25,18 @@ public class DbOperation {
 		String password=props.getProperty("password");
 		Class.forName(driver);
 		conn=DriverManager.getConnection(url,username,password);
+		isLinked=true;
 	}
 	
 	public void linkDb(String driver,String url,String username,String password) throws Exception{
 		
 		Class.forName(driver);
 		conn=DriverManager.getConnection(url,username,password);
+		isLinked=true;
 	}
 	public void linkDb() throws Exception{
 		this.linkDb("oracle.jdbc.driver.OracleDriver","jdbc:oracle:thin:@localhost:1521:orcl","system","123456");
+		isLinked=true;
 	}
 	public int updateLots(String sql,Object[][] o) throws Exception{
 		pstmt=conn.prepareStatement(sql,ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
@@ -72,4 +75,12 @@ public class DbOperation {
 	public void closeConn() throws Exception{
 		conn.close();
 	}
+
+
+	public boolean isLinked() {
+		return isLinked;
+	}
+
+
+	
 }
