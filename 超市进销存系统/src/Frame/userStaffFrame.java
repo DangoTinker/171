@@ -51,12 +51,13 @@ public class userStaffFrame extends JFrame{
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
+		/*
 		if(list.size()==0) {
 			dispose();
 			new NoticeFrame("无此员工");
 			
 		}
-		
+		*/
 		
 		Object[] o=dao.getName();
 		tableModel=AstMethod.makeTableModel(o,list);

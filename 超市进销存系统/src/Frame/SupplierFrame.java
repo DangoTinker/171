@@ -38,7 +38,7 @@ public class SupplierFrame extends JFrame{
 	
 	
 	public SupplierFrame() {
-		
+		this.setSize(500,300);
 		try {
 			dao=SupplierDao.getInstance();
 			list=(LinkedList<Tranable>)dao.queryAll();
@@ -89,6 +89,8 @@ public class SupplierFrame extends JFrame{
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	

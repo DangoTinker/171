@@ -50,6 +50,7 @@ public class StaffFrame extends JFrame{
 	
 	
 	public StaffFrame(String u) {
+		this.setSize(500, 300);
 		username=u;
 		try {
 			dao=StaffDao.getInstance();
@@ -91,7 +92,8 @@ public class StaffFrame extends JFrame{
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
 		picButton.addMouseListener(new ButtonListener());
-		
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	

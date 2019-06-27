@@ -13,6 +13,7 @@ public class MainFrame extends JFrame{
 	private String username;
 	private boolean root;
 	public MainFrame(String u) throws Exception{
+		this.setSize(300,200);
 		username=u;
 		root=AstMethod.isRoot(username);
 		JPanel panel=new JPanel();
@@ -32,6 +33,8 @@ public class MainFrame extends JFrame{
 		staffButton.addMouseListener(new ButtonListener());
 		userAddButton.addMouseListener(new ButtonListener());
 		userStaffButton.addMouseListener(new ButtonListener());
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 	
