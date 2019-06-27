@@ -92,7 +92,6 @@ public class StaffFrame extends JFrame{
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
 		picButton.addMouseListener(new ButtonListener());
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
