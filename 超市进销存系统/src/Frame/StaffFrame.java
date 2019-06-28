@@ -33,7 +33,7 @@ public class StaffFrame extends JFrame{
 	private JTable table;
 	private JFrame frame;
 	private byte[] iconFile;
-	
+	private String path=null;
 	private JLabel stnoLabel=new JLabel("编号");
 	private JLabel stnameLabel=new JLabel("姓名");
 	private JLabel stlevelLabel=new JLabel("级别");
@@ -80,17 +80,18 @@ public class StaffFrame extends JFrame{
 		JButton deleteButton=new JButton("删除");
 		JButton updateButton=new JButton("修改");
 		JButton picButton=new JButton("查看头像");
-		
+		JButton exportButton=new JButton("导出");
 		
 		panel.add(insertButton);
 		panel.add(deleteButton);
 		panel.add(updateButton);
 		panel.add(picButton);
-		
+		panel.add(exportButton);
 		iconFileButton.addMouseListener(new ButtonListener());
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
+		exportButton.addMouseListener(new ButtonListener());
 		picButton.addMouseListener(new ButtonListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
@@ -130,7 +131,10 @@ public class StaffFrame extends JFrame{
 			}
 			case "打开文件":{
 				try {
-					openFile();
+					path=AstMethod.openFile(FileDialog.LOAD);
+					FileInputStream in=new FileInputStream(path);
+					iconFile=in.readAllBytes();
+					iconFileLabel.setText(path);
 				}catch(Exception ex) {
 					new NoticeFrame("打开文件失败"+ex.getMessage());
 				}
@@ -143,6 +147,20 @@ public class StaffFrame extends JFrame{
 				break;
 			}
 			
+			case "导出":{
+				try {
+					path=AstMethod.openFile(FileDialog.SAVE);
+					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					AstMethod.exportCSV(ls, path);
+				}catch(Exception ex) {
+					if(path==null) {
+						new NoticeFrame("未设置路径");
+					}
+					else
+						new NoticeFrame("导出错误"+ex.getMessage());
+				}
+				break;
+			}
 			
 			}
 		}
@@ -159,19 +177,7 @@ public class StaffFrame extends JFrame{
 		return i;
 	}
 	
-	public void openFile() {
-		try {
-			FileDialog openFile=new FileDialog(frame,"打开文件",FileDialog.LOAD);
-			openFile.setVisible(true);
-			if(openFile.getFile()!=null) {
-				InputStream input=new FileInputStream(openFile.getDirectory()+openFile.getFile());
-				iconFile=input.readAllBytes();
-			iconFileLabel.setText(openFile.getFile());
-			}
-		}catch(Exception ex) {
-			new NoticeFrame("打开错误"+ex.getMessage());
-		}
-	}
+
 	
 	
 	private int insert() throws Exception{

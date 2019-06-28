@@ -67,12 +67,6 @@ public class SupplierDao {
 	}
 	public  int deleteOne(Supplier supplier) throws Exception{
 		Object[] o=supplier.tran();
-		Object[] goods=new Object[1];
-		goods[0]=o[0];
-		Object[] contacter=new Object[1];
-		contacter[0]=o[0];
-		db.updateOne("delete from contacter where sno=?",contacter );
-		db.updateOne("delete from goods where sno=?", goods);
 		return db.updateOne("delete from supplier where sno=? and sname=? and simply=? and address=? and sphone=? and mail=?", o);
 		
 	}
