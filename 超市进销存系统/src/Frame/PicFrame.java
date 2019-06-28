@@ -34,7 +34,7 @@ public class PicFrame extends JFrame{
 		panel2.add(button);
 		this.add(panel1,BorderLayout.NORTH);
 		this.add(panel2,BorderLayout.CENTER);
-		this.setSize(100,100);
+		this.setSize(300,300);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}

@@ -4,6 +4,8 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -20,8 +22,7 @@ public class SupplierFrame extends JFrame{
 	private LinkedList<Tranable> list;
 	private JTable table;
 //	private int oldRowCount;
-	
-	
+	private String path=null;
 	private JLabel snoLabel;
 	private JLabel snameLabel;
 	private JLabel simplyLabel;
@@ -82,13 +83,15 @@ public class SupplierFrame extends JFrame{
 		JButton insertButton=new JButton("添加");
 		JButton deleteButton=new JButton("删除");
 		JButton updateButton=new JButton("修改");
+		JButton exportButton=new JButton("导出");
 		panel.add(insertButton);
 		panel.add(deleteButton);
 		panel.add(updateButton);
-		
+		panel.add(exportButton);
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
+		exportButton.addMouseListener(new ButtonListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -123,7 +126,24 @@ public class SupplierFrame extends JFrame{
 				}
 				break;
 			}
-				
+			
+			case "导出":{
+				try {
+					path=AstMethod.openFile(FileDialog.SAVE);
+					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					AstMethod.exportCSV(ls, path);
+				}catch(Exception ex) {
+					if(path==null) {
+						new NoticeFrame("未设置路径");
+					}
+					else
+						new NoticeFrame("导出错误"+ex.getMessage());
+				}
+				break;
+			}
+			
+			
+			
 			}
 		}
 	}
@@ -190,6 +210,5 @@ public class SupplierFrame extends JFrame{
 		}
 		return temp;
 	}
-	
 	
 }

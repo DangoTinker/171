@@ -55,9 +55,6 @@ public class GoodsDao {
 	}
 	public  int deleteOne(Goods goods) throws Exception{
 		Object[] o=goods.tran();
-		Object[] purchase=new Object[1];
-		purchase[0]=o[0];
-		db.updateOne("delete from goods where sno=?", purchase);
 		return db.updateOne("delete from goods where gno=? and sno=? and gname=? and simply=? and price=?", o);
 		
 	}

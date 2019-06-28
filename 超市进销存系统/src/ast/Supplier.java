@@ -7,6 +7,8 @@ public class Supplier implements Tranable{
 	private String address;
 	private String phone;
 	private String mail;
+	
+	
 	public Supplier(String a,String b,String c,String d,String e,String f) {
 		sno=a;sname=b;simply=c;address=d;phone=e;mail=f;
 	}

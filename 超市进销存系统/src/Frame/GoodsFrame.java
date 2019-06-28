@@ -1,5 +1,6 @@
 package Frame;
 
+import java.awt.FileDialog;
 import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -28,7 +29,8 @@ public class GoodsFrame extends JFrame{
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
-
+	private JFrame frame;
+	private String path;
 	
 	private JLabel gnoLabel;
 	private JLabel gnameLabel;
@@ -85,14 +87,15 @@ public class GoodsFrame extends JFrame{
 		JButton insertButton=new JButton("添加");
 		JButton deleteButton=new JButton("删除");
 		JButton updateButton=new JButton("修改");
-		
+		JButton exportButton=new JButton("导出");
 		panel.add(insertButton);
 		panel.add(deleteButton);
 		panel.add(updateButton);
-		
+		panel.add(exportButton);
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
+		exportButton.addMouseListener(new ButtonListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -128,7 +131,22 @@ public class GoodsFrame extends JFrame{
 				}
 				break;
 			}
-				
+			
+			case "导出":{
+				try {
+					path=AstMethod.openFile(FileDialog.SAVE);
+					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					AstMethod.exportCSV(ls, path);
+				}catch(Exception ex) {
+					if(path==null) {
+						new NoticeFrame("未设置路径");
+					}
+					else
+						new NoticeFrame("导出错误"+ex.getMessage());
+				}
+				break;
+			}
+			
 			}
 		}
 	}
@@ -168,6 +186,7 @@ public class GoodsFrame extends JFrame{
 		}
 		return temp;
 	}
+	
 	
 	
 	

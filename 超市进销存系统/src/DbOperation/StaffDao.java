@@ -81,7 +81,6 @@ public class StaffDao {
 	
 	public int deleteOne(Staff staff) throws Exception{
 		Object[] o=staff.tran();
-		Object[] temp=new Object[1];
 		
 		Object[] test=new Object[count-1];
 		
@@ -89,8 +88,6 @@ public class StaffDao {
 			test[i]=o[i];
 		}
 		
-		temp[0]=o[0];
-		db.updateOne("delete from purchaseList where stno=?",temp);
 		return db.updateOne("delete from staff where stno=? and stname=? and stlevel=? and phone=? and salary=? ", test);
 		
 	}

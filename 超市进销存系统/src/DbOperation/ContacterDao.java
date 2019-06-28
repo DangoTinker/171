@@ -51,9 +51,6 @@ public class ContacterDao {
 	}
 	public  int deleteOne(Contacter goods) throws Exception{
 		Object[] o=goods.tran();
-		Object[] purchase=new Object[1];
-		purchase[0]=o[0];
-		db.updateOne("delete from contacter where cno=?", purchase);
 		return db.updateOne("delete from contacter where cno=? and sno=? and cname=? and phone=?", o);
 		
 	}
