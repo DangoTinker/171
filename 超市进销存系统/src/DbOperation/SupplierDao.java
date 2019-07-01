@@ -66,8 +66,9 @@ public class SupplierDao {
 		return db.updateOne("insert into supplier values(?,?,?,?,?,?)", o);
 	}
 	public  int deleteOne(Supplier supplier) throws Exception{
-		Object[] o=supplier.tran();
-		return db.updateOne("delete from supplier where sno=? and sname=? and simply=? and address=? and sphone=? and mail=?", o);
+		Object[] o=new Object[1];
+		o[0]=(supplier.tran())[0];
+		return db.updateOne("delete from supplier where sno=?", o);
 		
 	}
 	

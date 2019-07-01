@@ -11,11 +11,9 @@ import DbOperation.DbOperation;
 import ast.AstMethod;
 public class MainFrame extends JFrame{
 	private String username;
-	private boolean root;
-	public MainFrame(String u) throws Exception{
+	public MainFrame(String u) {
 		this.setSize(300,200);
 		username=u;
-		root=AstMethod.isRoot(username);
 		JPanel panel=new JPanel();
 		JButton supplierButton=new JButton("供应商管理");
 		JButton goodsButton=new JButton("商品管理");
@@ -23,6 +21,7 @@ public class MainFrame extends JFrame{
 		JButton contacterButton=new JButton("联系人管理");
 		JButton userAddButton=new JButton("添加用户");
 		JButton userStaffButton=new JButton("个人信息");
+		JButton purchaseListButton=new JButton("采购表管理");
 		this.add(panel);
 		panel.add(supplierButton);
 		panel.add(goodsButton);
@@ -30,12 +29,34 @@ public class MainFrame extends JFrame{
 		panel.add(userAddButton);
 		panel.add(userStaffButton);
 		panel.add(contacterButton);
-		supplierButton.addMouseListener(new ButtonListener());
-		goodsButton.addMouseListener(new ButtonListener());
-		staffButton.addMouseListener(new ButtonListener());
-		userAddButton.addMouseListener(new ButtonListener());
-		userStaffButton.addMouseListener(new ButtonListener());
-		contacterButton.addMouseListener(new ButtonListener());
+		panel.add(purchaseListButton);
+		try {
+			if(AstMethod.isRoot(username)) {
+				supplierButton.addMouseListener(new ButtonListener());
+				staffButton.addMouseListener(new ButtonListener());
+				userAddButton.addMouseListener(new ButtonListener());
+				contacterButton.addMouseListener(new ButtonListener());
+				
+				goodsButton.addMouseListener(new ButtonListener());
+				userStaffButton.addMouseListener(new ButtonListener());
+				purchaseListButton.addMouseListener(new ButtonListener());
+				
+			}
+			else {
+				goodsButton.addMouseListener(new ButtonListener());
+				userStaffButton.addMouseListener(new ButtonListener());
+				
+				supplierButton.setEnabled(false);
+				staffButton.setEnabled(false);
+				userAddButton.setEnabled(false);
+				contacterButton.setEnabled(false);
+				purchaseListButton.addMouseListener(new ButtonListener());
+			}
+		} catch (Exception e) {
+			new NoticeFrame("权限检测失败"+e.getMessage());
+		}
+		
+		
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
@@ -45,12 +66,9 @@ public class MainFrame extends JFrame{
 		public void mousePressed(MouseEvent e) {
 			switch (((JButton)e.getSource()).getText()) {
 				case "供应商管理":{
-					if(root) {
-						new SupplierFrame();
-					}
-					else {
-						new NoticeFrame("权限不足");
-					}
+					
+					new SupplierFrame(username);
+					
 					break;
 				}
 				
@@ -60,20 +78,14 @@ public class MainFrame extends JFrame{
 				}
 				
 				case "员工管理":{
-					if(root)
-						new StaffFrame(username);
-					else
-						new userStaffFrame(username);
+					new StaffFrame(username);
 					break;
 				}
 				
 				case "添加用户":{
-					if(root) {
-						new userAddFrame();
-					}
-					else {
-						new NoticeFrame("权限不足");
-					}
+					
+					new NoticeFrame("权限不足");
+					
 					break;
 				}
 				
@@ -85,7 +97,10 @@ public class MainFrame extends JFrame{
 					new ContacterFrame(username);
 					break;
 				}
-				
+				case "采购表管理":{
+					new PurchaseListFrame(username);
+					break;
+				}
 			}
 		}
 	}
