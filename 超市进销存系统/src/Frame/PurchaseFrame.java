@@ -137,6 +137,8 @@ public class PurchaseFrame extends JFrame{
 					path=AstMethod.openFile(FileDialog.SAVE);
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll(listLno);
 					AstMethod.exportCSV(ls, path);
+					new NoticeFrame("导出成功");
+
 				}catch(Exception ex) {
 					if(path==null) {
 						new NoticeFrame("未设置路径");

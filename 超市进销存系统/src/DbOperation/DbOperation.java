@@ -35,7 +35,8 @@ public class DbOperation {
 		isLinked=true;
 	}
 	public void linkDb() throws Exception{
-		this.linkDb("oracle.jdbc.driver.OracleDriver","jdbc:oracle:thin:@localhost:1521:orcl","system","123456");
+		BufferedInputStream buffer=new BufferedInputStream(new FileInputStream("DBinformation.txt"));
+		linkDb(buffer);
 		isLinked=true;
 	}
 	public int updateLots(String sql,Object[][] o) throws Exception{

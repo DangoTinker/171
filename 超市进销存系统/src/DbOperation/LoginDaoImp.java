@@ -2,18 +2,18 @@ package DbOperation;
 
 import java.sql.ResultSet;
 
-public class LoginDao {
-	private static DbOperation db;
-	private static LoginDao l=null;
-	public static LoginDao getInstance() throws Exception{
+import ast.UserMessage;
+
+public class LoginDaoImp extends BaseDaoImp<UserMessage>{
+
+	public LoginDaoImp() throws Exception {
+		super();
 		db=DbOperation.getInstance();
 		if(!db.isLinked())
 			db.linkDb();
-		if(l==null) {
-			l=new LoginDao();
-		}
-		return l;
 	}
+	private static DbOperation db;
+
 	public int Login(String username,String password) throws Exception{
 		Object[] o=new Object[1];
 		o[0]=username;
@@ -31,4 +31,5 @@ public class LoginDao {
 		o[2]=level;
 		return db.updateOne("insert into userMessage values(?,?,?)", o);
 	}
+	
 }

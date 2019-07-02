@@ -20,15 +20,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-import DbOperation.LoginDao;
+import DbOperation.*;
 
 
 public class LoginFrame extends JFrame{
-	private LoginDao dao;
+	private LoginDaoImp dao;
 	private JTextField text1,text2;
 	public LoginFrame() {
 		try {
-			dao=LoginDao.getInstance();
+			dao=new LoginDaoImp();
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}

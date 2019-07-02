@@ -20,14 +20,14 @@ public class MainFrame extends JFrame{
 		JButton staffButton=new JButton("员工管理");
 		JButton contacterButton=new JButton("联系人管理");
 		JButton userAddButton=new JButton("添加用户");
-		JButton userStaffButton=new JButton("个人信息");
+//		JButton userStaffButton=new JButton("个人信息");
 		JButton purchaseListButton=new JButton("采购表管理");
 		this.add(panel);
 		panel.add(supplierButton);
 		panel.add(goodsButton);
 		panel.add(staffButton);
 		panel.add(userAddButton);
-		panel.add(userStaffButton);
+//		panel.add(userStaffButton);
 		panel.add(contacterButton);
 		panel.add(purchaseListButton);
 		try {
@@ -38,13 +38,13 @@ public class MainFrame extends JFrame{
 				contacterButton.addMouseListener(new ButtonListener());
 				
 				goodsButton.addMouseListener(new ButtonListener());
-				userStaffButton.addMouseListener(new ButtonListener());
+//				userStaffButton.addMouseListener(new ButtonListener());
 				purchaseListButton.addMouseListener(new ButtonListener());
 				
 			}
 			else {
 				goodsButton.addMouseListener(new ButtonListener());
-				userStaffButton.addMouseListener(new ButtonListener());
+//				userStaffButton.addMouseListener(new ButtonListener());
 				
 				supplierButton.setEnabled(false);
 				staffButton.setEnabled(false);
