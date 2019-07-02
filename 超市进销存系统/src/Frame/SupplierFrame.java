@@ -9,10 +9,7 @@ import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.BaseDaoImp;
-import DbOperation.Dao;
-import DbOperation.DbOperation;
-import DbOperation.SupplierDaoImp;
+import DbOperation.*;
 import ast.AstMethod;
 import ast.Supplier;
 import ast.Tranable;

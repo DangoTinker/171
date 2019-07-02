@@ -88,11 +88,12 @@ public class MainFrame extends JFrame{
 					
 					break;
 				}
-				
+				/*
 				case "个人信息":{
 					new userStaffFrame(username);
 					break;
 				}
+				*/
 				case "联系人管理":{
 					new ContacterFrame(username);
 					break;

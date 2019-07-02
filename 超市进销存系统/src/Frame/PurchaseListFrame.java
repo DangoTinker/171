@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -16,13 +17,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.PurchaseListDao;
+import DbOperation.*;
 import ast.AstMethod;
 import ast.PurchaseList;
+import ast.Staff;
 import ast.Tranable;
 
 public class PurchaseListFrame extends JFrame{
-	private PurchaseListDao dao;
+	private PurchaseListDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private String username;
@@ -48,10 +50,14 @@ public class PurchaseListFrame extends JFrame{
 		this.setSize(500, 300);
 		username=u;
 		try {
+			list=new LinkedList<Tranable>();
+			dao=new PurchaseListDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new PurchaseList(rs.getString("lno"),rs.getString("stno"),rs.getInt("lcount"),rs.getDouble("total"),rs.getString("time")));	
+			}
 			
-			dao=PurchaseListDao.getInstance();
 			
-			list=(LinkedList<Tranable>)dao.queryAll();
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 			e.printStackTrace();
@@ -181,7 +187,7 @@ public class PurchaseListFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		PurchaseList Plist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
-		int i=dao.deleteOne(Plist);
+		int i=dao.delete(Plist);
 		if(i==0) {
 			return i;
 		}
@@ -190,7 +196,7 @@ public class PurchaseListFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		PurchaseList Plist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
-		int n=dao.insertOne(Plist);
+		int n=dao.insert(Plist);
 		if(n==0) {
 			return n;
 		}
@@ -203,7 +209,7 @@ public class PurchaseListFrame extends JFrame{
 		int n=table.getSelectedRow();
 		PurchaseList oldPlist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
 		PurchaseList newPlist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
-		int temp= dao.updateOne(oldPlist, newPlist);
+		int temp= dao.update(newPlist);
 		tableModel.removeRow(n);
 		tableModel.addRow(newPlist.tran());
 		if(temp==0) {

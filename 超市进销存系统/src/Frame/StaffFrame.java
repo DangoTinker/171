@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -15,8 +16,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.StaffDao;
+import DbOperation.*;
 import ast.AstMethod;
 import ast.Goods;
 import ast.Staff;
@@ -24,7 +24,7 @@ import ast.Supplier;
 import ast.Tranable;
 
 public class StaffFrame extends JFrame{
-	private StaffDao dao;
+	private StaffDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private String username;
@@ -51,8 +51,13 @@ public class StaffFrame extends JFrame{
 		this.setSize(500, 300);
 		username=u;
 		try {
-			dao=StaffDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
+			list=new LinkedList<Tranable>();
+			dao=new StaffDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes()));	
+			}
+			
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
@@ -168,7 +173,7 @@ public class StaffFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Staff staff=new Staff((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(double)tableModel.getValueAt(n, 4),(byte[])tableModel.getValueAt(n, 5));
-		int i=dao.deleteOne(staff);
+		int i=dao.delete(staff);
 		if(i==0) {
 			return i;
 		}
@@ -181,7 +186,7 @@ public class StaffFrame extends JFrame{
 	
 	private int insert() throws Exception{
 		Staff staff=new Staff(stnoText.getText(),stnameText.getText(),stlevelText.getText(),phoneText.getText(),Double.valueOf(salaryText.getText()),iconFile);
-		int n=dao.insertOne(staff);
+		int n=dao.insert(staff);
 		if(n==0) {
 			return n;
 		}
@@ -194,7 +199,7 @@ public class StaffFrame extends JFrame{
 		int n=table.getSelectedRow();
 		Staff oldStaff=new Staff((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(double)tableModel.getValueAt(n, 4),(byte[])tableModel.getValueAt(n, 5));
 		Staff newStaff=new Staff(stnoText.getText(),stnameText.getText(),stlevelText.getText(),phoneText.getText(),Double.valueOf(salaryText.getText()),iconFile);
-		int temp= dao.updateOne(oldStaff, newStaff);
+		int temp= dao.update(newStaff);
 		tableModel.removeRow(n);
 		
 		

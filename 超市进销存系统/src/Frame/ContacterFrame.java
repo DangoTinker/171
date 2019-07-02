@@ -4,6 +4,7 @@ import java.awt.FileDialog;
 import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -15,15 +16,15 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import DbOperation.DbOperation;
-import DbOperation.ContacterDao;
-
+import DbOperation.GoodsDaoImp;
+import DbOperation.ContacterDaoImp;
 import ast.AstMethod;
 import ast.Contacter;
-
+import ast.Goods;
 import ast.Tranable;
 
 public class ContacterFrame extends JFrame{
-	private ContacterDao dao;
+	private ContacterDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
@@ -48,8 +49,12 @@ public class ContacterFrame extends JFrame{
 		this.setSize(300, 300);
 		username=u;
 		try {
-			dao=ContacterDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
+			dao=new ContacterDaoImp();
+			list=new LinkedList<Tranable>();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new Contacter(rs.getString("cno"),rs.getString("sno"),rs.getString("cname"),rs.getString("phone")));	
+			}
 			
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
@@ -151,7 +156,7 @@ public class ContacterFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Contacter Goods=new Contacter((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3));
-		int i=dao.deleteOne(Goods);
+		int i=dao.delete(Goods);
 		if(i==0) {
 			return i;
 		}
@@ -160,7 +165,7 @@ public class ContacterFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		Contacter temp=new Contacter(cnoText.getText(),snoText.getText(),cnameText.getText(),phoneText.getText());
-		int n=dao.insertOne(temp);
+		int n=dao.insert(temp);
 		if(n==0) {
 			return n;
 		}
@@ -171,9 +176,9 @@ public class ContacterFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Contacter oldSupplier=new Contacter((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3));
+//		Contacter oldSupplier=new Contacter((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3));
 		Contacter newSupplier=new Contacter(cnoText.getText(),snoText.getText(),cnameText.getText(),phoneText.getText());
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		int temp= dao.update(newSupplier);
 		tableModel.removeRow(n);
 		
 		
