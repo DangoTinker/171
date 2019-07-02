@@ -9,9 +9,11 @@ import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
+import DbOperation.BaseDaoImp;
 import DbOperation.Dao;
 import DbOperation.DbOperation;
 import DbOperation.SupplierDao;
+import DbOperation.SupplierDaoImp;
 import ast.AstMethod;
 import ast.Supplier;
 import ast.Tranable;
@@ -205,7 +207,7 @@ public class SupplierFrame extends JFrame{
 		tableModel.addRow(temp.tran());
 		return n;
 		*/
-		Dao d=Dao.getInstance();
+		SupplierDaoImp d=new SupplierDaoImp();
 		d.insert(temp);
 		tableModel.addRow(temp.tran());
 		return 0;
