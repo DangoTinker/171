@@ -24,7 +24,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 	
 	@Override
 	public int insert(T t) throws Exception {
-		// TODO 自动生成的方法存根
 		String sql=getSQL("SQL_INSERT");
 		Object[] o=setArgs(t,"SQL_INSERT");
 		System.out.println(sql);
@@ -34,7 +33,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 
 	@Override
 	public int delete(T t) throws Exception {
-		// TODO 自动生成的方法存根
 		
 		String sql=getSQL("SQL_DELETE");
 		Object[] o=setArgs(t,"SQL_DELETE");
@@ -45,7 +43,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 
 	@Override
 	public int update(T t) throws Exception {
-		// TODO 自动生成的方法存根
 		String sql=getSQL("SQL_UPDATE");
 		Object[] o=setArgs(t,"SQL_UPDATE");
 		System.out.println(sql);
@@ -55,7 +52,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 
 	@Override
 	public ResultSet queryAll() throws Exception {
-		// TODO 自动生成的方法存根
 		String sql=getSQL("SQL_SELECT");
 		return db.query(sql, new Object[0]);
 	}

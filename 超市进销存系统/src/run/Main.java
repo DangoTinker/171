@@ -1,8 +1,6 @@
-package Frame;
+package run;
 
-import java.util.Scanner;
-
-import DbOperation.DbOperation;
+import Frame.LoginFrame;
 
 public class Main {
 	public static void main(String[] args) throws Exception{
