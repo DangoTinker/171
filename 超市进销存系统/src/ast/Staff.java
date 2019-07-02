@@ -77,14 +77,6 @@ public class Staff implements Tranable{
 	}
 
 
-	@Override
-	public Object[] getPri() {
-		// TODO 自动生成的方法存根
-		Object[] o=new Object[1];
-		o[0]=stno;
-		return o;
-	}
-	
-	
+
 	
 }

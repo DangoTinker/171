@@ -54,11 +54,5 @@ public class Supplier implements Tranable{
 		o[0]=sno;o[1]=sname;o[2]=simply;o[3]=address;o[4]=sphone;o[5]=mail;
 		return o;
 	}
-	@Override
-	public Object[] getPri() {
-		// TODO 自动生成的方法存根
-		Object[] o=new Object[1];
-		o[0]=sno;
-		return o;
-	}
+
 }

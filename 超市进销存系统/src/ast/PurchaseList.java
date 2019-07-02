@@ -58,13 +58,6 @@ public class PurchaseList implements Tranable{
 		this.time = time;
 	}
 
-	@Override
-	public Object[] getPri() {
-		Object[] o=new Object[1];
-		o[0]=lno;
-		return o;
-	}
-	
 	
 
 }

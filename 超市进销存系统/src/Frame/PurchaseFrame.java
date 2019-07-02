@@ -6,6 +6,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -16,13 +17,15 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.PurchaseDao;
+import DbOperation.PurchaseDaoImp;
+import DbOperation.PurchaseListDaoImp;
 import ast.AstMethod;
 import ast.Purchase;
+import ast.PurchaseList;
 import ast.Tranable;
 
 public class PurchaseFrame extends JFrame{
-	private PurchaseDao dao;
+	private PurchaseDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private String username;
@@ -43,8 +46,12 @@ public class PurchaseFrame extends JFrame{
 		listLno=l;
 		username=u;
 		try {
-			dao=PurchaseDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll(listLno);
+			list=new LinkedList<Tranable>();
+			dao=new PurchaseDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new Purchase(rs.getString("lno"),rs.getString("gno"),rs.getInt("count")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
@@ -147,7 +154,7 @@ public class PurchaseFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Purchase purch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
-		int i=dao.deleteOne(purch);
+		int i=dao.delete(purch);
 		if(i==0) {
 			return i;
 		}
@@ -156,7 +163,7 @@ public class PurchaseFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		Purchase purch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
-		int n=dao.insertOne(purch);
+		int n=dao.insert(purch);
 		if(n==0) {
 			return n;
 		}
@@ -169,7 +176,7 @@ public class PurchaseFrame extends JFrame{
 		int n=table.getSelectedRow();
 		Purchase oldpurch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
 		Purchase newpurch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
-		int temp= dao.updateOne(oldpurch, newpurch);
+		int temp= dao.update( newpurch);
 		tableModel.removeRow(n);
 		tableModel.addRow(newpurch.tran());
 		if(temp==0) {

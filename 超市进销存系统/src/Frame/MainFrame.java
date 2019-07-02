@@ -84,7 +84,7 @@ public class MainFrame extends JFrame{
 				
 				case "添加用户":{
 					
-					new NoticeFrame("权限不足");
+					new userAddFrame();
 					
 					break;
 				}

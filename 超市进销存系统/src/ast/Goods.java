@@ -49,11 +49,6 @@ public class Goods implements Tranable{
 		this.price = price;
 	}
 
-	@Override
-	public Object[] getPri() {
-		Object[] o=new Object[1];
-		o[0]=gno;
-		return o;
-	}
+
 	
 }

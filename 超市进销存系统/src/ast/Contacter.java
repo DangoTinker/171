@@ -42,11 +42,6 @@ public class Contacter implements Tranable{
 		this.phone = phone;
 	}
 
-	@Override
-	public Object[] getPri() {
-		Object[] o=new Object[1];
-		o[0]=cno;
-		return o;
-	}
+
 
 }
