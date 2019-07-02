@@ -50,9 +50,8 @@ public class ContacterDao {
 		return db.updateOne("insert into contacter values(?,?,?,?)", o);
 	}
 	public  int deleteOne(Contacter goods) throws Exception{
-		Object[] o=new Object[1];
-		o[0]=(goods.tran())[0];
-		return db.updateOne("delete from contacter where cno=?", o);
+		Object[] o=goods.tran();
+		return db.updateOne("delete from contacter where cno=? and sno=? and cname=? and phone=?", o);
 		
 	}
 	

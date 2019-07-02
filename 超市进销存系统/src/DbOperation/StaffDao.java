@@ -80,11 +80,15 @@ public class StaffDao {
 	}
 	
 	public int deleteOne(Staff staff) throws Exception{
-		Object[] o=new Object[1];
-		o[0]=(staff.tran())[0];
+		Object[] o=staff.tran();
 		
+		Object[] test=new Object[count-1];
 		
-		return db.updateOne("delete from staff where stno=? ", o);
+		for(int i=0;i<count-1;i++) {
+			test[i]=o[i];
+		}
+		
+		return db.updateOne("delete from staff where stno=? and stname=? and stlevel=? and phone=? and salary=? ", test);
 		
 	}
 	

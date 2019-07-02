@@ -92,22 +92,10 @@ public class GoodsFrame extends JFrame{
 		panel.add(deleteButton);
 		panel.add(updateButton);
 		panel.add(exportButton);
-		try {
-			if(AstMethod.isRoot(username)) {
-				insertButton.addMouseListener(new ButtonListener());
-				deleteButton.addMouseListener(new ButtonListener());
-				updateButton.addMouseListener(new ButtonListener());
-				exportButton.addMouseListener(new ButtonListener());
-			}
-			else {
-				insertButton.setEnabled(false);
-				deleteButton.setEnabled(false);
-				updateButton.setEnabled(false);
-				exportButton.addMouseListener(new ButtonListener());
-			}
-		} catch (Exception e) {
-			new NoticeFrame("检测权限失败"+e.getMessage());
-		}
+		insertButton.addMouseListener(new ButtonListener());
+		deleteButton.addMouseListener(new ButtonListener());
+		updateButton.addMouseListener(new ButtonListener());
+		exportButton.addMouseListener(new ButtonListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -149,7 +137,6 @@ public class GoodsFrame extends JFrame{
 					path=AstMethod.openFile(FileDialog.SAVE);
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
-					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
 					if(path==null) {
 						new NoticeFrame("未设置路径");
@@ -175,7 +162,6 @@ public class GoodsFrame extends JFrame{
 		return i;
 	}
 	private int insert() throws Exception{
-
 		Goods temp=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
 		int n=dao.insertOne(temp);
 		if(n==0) {
