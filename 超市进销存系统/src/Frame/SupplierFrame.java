@@ -12,14 +12,13 @@ import javax.swing.table.DefaultTableModel;
 import DbOperation.BaseDaoImp;
 import DbOperation.Dao;
 import DbOperation.DbOperation;
-import DbOperation.SupplierDao;
 import DbOperation.SupplierDaoImp;
 import ast.AstMethod;
 import ast.Supplier;
 import ast.Tranable;
 
 public class SupplierFrame extends JFrame{
-	private SupplierDao dao;
+	private SupplierDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
@@ -44,10 +43,14 @@ public class SupplierFrame extends JFrame{
 	public SupplierFrame(String u) {
 		username=u;
 		this.setSize(500,300);
+		list=new LinkedList<Tranable>();
 		try {
-			dao=SupplierDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
-			
+			dao=new SupplierDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				
+				list.add(new Supplier(rs.getString("sno"),rs.getString("sname"),rs.getString("simply"),rs.getString("address"),rs.getString("sphone"),rs.getString("mail")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
@@ -190,7 +193,7 @@ public class SupplierFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Supplier supplier=new Supplier((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4),(String)tableModel.getValueAt(n, 5));
-		int i=dao.deleteOne(supplier);
+		int i=dao.delete(supplier);
 		if(i==0) {
 			return i;
 		}
@@ -217,7 +220,7 @@ public class SupplierFrame extends JFrame{
 		int n=table.getSelectedRow();
 		Supplier oldSupplier=new Supplier((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4),(String)tableModel.getValueAt(n, 5));
 		Supplier newSupplier=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		int temp= dao.update(newSupplier);
 		tableModel.removeRow(n);
 		
 		

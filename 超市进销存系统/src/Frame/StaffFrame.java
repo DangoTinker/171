@@ -16,9 +16,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import DbOperation.DbOperation;
-import DbOperation.GoodsDao;
 import DbOperation.StaffDao;
-import DbOperation.SupplierDao;
 import ast.AstMethod;
 import ast.Goods;
 import ast.Staff;

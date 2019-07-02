@@ -5,6 +5,7 @@ import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -16,15 +17,14 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import DbOperation.DbOperation;
-import DbOperation.GoodsDao;
-import DbOperation.SupplierDao;
+import DbOperation.GoodsDaoImp;
 import ast.AstMethod;
 import ast.Goods;
 import ast.Supplier;
 import ast.Tranable;
 
 public class GoodsFrame extends JFrame{
-	private GoodsDao dao;
+	private GoodsDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
@@ -50,11 +50,15 @@ public class GoodsFrame extends JFrame{
 		this.setSize(500, 300);
 		username=u;
 		try {
-			dao=GoodsDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
-			
+			list=new LinkedList<Tranable>();
+			dao=new GoodsDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
 		}
 		Object[] o=dao.getName();
 		tableModel=AstMethod.makeTableModel(o,list);
@@ -131,6 +135,7 @@ public class GoodsFrame extends JFrame{
 					delete();
 				}catch(Exception ex) {
 					new NoticeFrame("É¾³ýÊ§°Ü"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -139,7 +144,7 @@ public class GoodsFrame extends JFrame{
 					update();
 				}catch(Exception ex) {
 					new NoticeFrame("ÐÞ¸ÄÊ§°Ü"+ex.getMessage());
-					
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -166,8 +171,8 @@ public class GoodsFrame extends JFrame{
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
-		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		int i=dao.deleteOne(Goods);
+		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(double)(tableModel.getValueAt(n, 4)));
+		int i=dao.delete(Goods);
 		if(i==0) {
 			return i;
 		}
@@ -177,7 +182,7 @@ public class GoodsFrame extends JFrame{
 	private int insert() throws Exception{
 
 		Goods temp=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int n=dao.insertOne(temp);
+		int n=dao.insert(temp);
 		if(n==0) {
 			return n;
 		}
@@ -188,9 +193,9 @@ public class GoodsFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
+//		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),((double)tableModel.getValueAt(n, 4)));
 		Goods newSupplier=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		int temp= dao.update(newSupplier);
 		tableModel.removeRow(n);
 		
 		
