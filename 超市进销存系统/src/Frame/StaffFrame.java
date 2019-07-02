@@ -188,6 +188,13 @@ public class StaffFrame extends JFrame{
 		}
 		
 		tableModel.addRow(staff.tran());
+		stnoText.setText("");
+		stnameText.setText(""); 
+		stlevelText.setText(""); 
+		phoneText.setText(""); 
+		salaryText.setText(""); 
+		iconFileLabel.setText("");
+		iconFile=null;
 		return n;
 	}
 	

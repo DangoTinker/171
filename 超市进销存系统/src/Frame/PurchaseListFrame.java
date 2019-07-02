@@ -199,6 +199,11 @@ public class PurchaseListFrame extends JFrame{
 		}
 		
 		tableModel.addRow(Plist.tran());
+		lnoText.setText(""); 
+		stnoText.setText("");
+		countText.setText("");
+		totalText.setText("");
+		timeText.setText("");
 		return n;
 	}
 	

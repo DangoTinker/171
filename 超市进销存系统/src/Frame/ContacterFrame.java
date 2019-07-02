@@ -167,6 +167,10 @@ public class ContacterFrame extends JFrame{
 		}
 		
 		tableModel.addRow(temp.tran());
+		cnoText.setText("");
+		snoText.setText("");
+		cnameText.setText("");
+		phoneText.setText("");
 		return n;
 	}
 	

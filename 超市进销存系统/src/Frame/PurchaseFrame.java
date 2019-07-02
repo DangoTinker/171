@@ -167,6 +167,9 @@ public class PurchaseFrame extends JFrame{
 		}
 		
 		tableModel.addRow(purch.tran());
+		lnoText.setText(""); 
+		gnoText.setText(""); 
+		countText.setText("");  
 		return n;
 	}
 	

@@ -208,6 +208,12 @@ public class SupplierFrame extends JFrame{
 		SupplierDaoImp d=new SupplierDaoImp();
 		d.insert(temp);
 		tableModel.addRow(temp.tran());
+		snoText.setText("");
+		snameText.setText("");
+		simplyText.setText("");
+		addressText.setText("");
+		sphoneText.setText("");
+		mailText.setText("");
 		return 0;
 	}
 	

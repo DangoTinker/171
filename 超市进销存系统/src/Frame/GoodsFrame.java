@@ -185,6 +185,12 @@ public class GoodsFrame extends JFrame{
 		}
 		
 		tableModel.addRow(temp.tran());
+		gnoText.setText("");
+		gnameText.setText("");
+		simplyText.setText("");
+		snoText.setText("");
+		priceText.setText("");
+		
 		return n;
 	}
 	
