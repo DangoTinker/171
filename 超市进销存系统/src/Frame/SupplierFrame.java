@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
+import DbOperation.Dao;
 import DbOperation.DbOperation;
 import DbOperation.SupplierDao;
 import ast.AstMethod;
@@ -112,6 +113,7 @@ public class SupplierFrame extends JFrame{
 					insert();
 				}catch(Exception ex) {
 					new NoticeFrame("ÃÌº” ß∞‹"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -195,13 +197,18 @@ public class SupplierFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		Supplier temp=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
-		int n=dao.insertOne(temp);
+		/*int n=dao.insertOne(temp);
 		if(n==0) {
 			return n;
 		}
 		
 		tableModel.addRow(temp.tran());
 		return n;
+		*/
+		Dao d=Dao.getInstance();
+		d.insert(temp);
+		tableModel.addRow(temp.tran());
+		return 0;
 	}
 	
 	private int update() throws Exception{

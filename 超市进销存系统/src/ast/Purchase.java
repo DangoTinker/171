@@ -40,5 +40,13 @@ public class Purchase implements Tranable{
 		this.count = count;
 	}
 
+	@Override
+	public Object[] getPri() {
+		Object[] o=new Object[2];
+		o[0]=lno;
+		o[1]=gno;
+		return o;
+	}
+
 
 }
