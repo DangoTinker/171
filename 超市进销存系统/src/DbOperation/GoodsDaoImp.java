@@ -1,7 +1,6 @@
 package DbOperation;
 
 import ast.Goods;
-import ast.Supplier;
 
 public class GoodsDaoImp extends BaseDaoImp<Goods>{
 

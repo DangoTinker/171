@@ -1,7 +1,6 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.ResultSet;
@@ -15,17 +14,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.GoodsDaoImp;
 import DbOperation.ContacterDaoImp;
 import ast.AstMethod;
 import ast.Contacter;
-import ast.Goods;
 import ast.Tranable;
 
 public class ContacterFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private ContacterDaoImp dao;
-	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
@@ -45,9 +41,8 @@ public class ContacterFrame extends JFrame{
 	
 	
 	
-	public ContacterFrame(String u) {
+	public ContacterFrame() {
 		this.setSize(300, 300);
-		username=u;
 		try {
 			dao=new ContacterDaoImp();
 			list=new LinkedList<Tranable>();
@@ -137,6 +132,7 @@ public class ContacterFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");

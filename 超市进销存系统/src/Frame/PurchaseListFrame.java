@@ -1,11 +1,8 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
@@ -20,16 +17,15 @@ import javax.swing.table.DefaultTableModel;
 import DbOperation.*;
 import ast.AstMethod;
 import ast.PurchaseList;
-import ast.Staff;
 import ast.Tranable;
 
 public class PurchaseListFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private PurchaseListDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private String username;
 	private JTable table;
-	private JFrame frame;
 	private String path=null;
 	
 	private JLabel lnoLabel=new JLabel("编号");
@@ -164,6 +160,7 @@ public class PurchaseListFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -207,7 +204,6 @@ public class PurchaseListFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		PurchaseList oldPlist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
 		PurchaseList newPlist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
 		int temp= dao.update(newPlist);
 		tableModel.removeRow(n);

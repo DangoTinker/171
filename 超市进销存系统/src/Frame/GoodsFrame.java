@@ -1,10 +1,8 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
@@ -16,20 +14,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
 import DbOperation.GoodsDaoImp;
 import ast.AstMethod;
 import ast.Goods;
-import ast.Supplier;
 import ast.Tranable;
 
 public class GoodsFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private GoodsDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
-	private JFrame frame;
 	private String path;
 	
 	private JLabel gnoLabel;
@@ -152,6 +148,7 @@ public class GoodsFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");

@@ -15,6 +15,7 @@ import javax.swing.JTextField;
 import DbOperation.LoginDaoImp;
 
 public class LogupFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private LoginDaoImp dao;
 	private JTextField text1,text2;
 	public LogupFrame() {

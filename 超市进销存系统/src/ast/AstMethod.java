@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.util.*;
 
 import DbOperation.DbOperation;
-import Frame.NoticeFrame;
 
 import javax.swing.JFrame;
 import javax.swing.table.DefaultTableModel;
@@ -50,14 +49,13 @@ public class AstMethod {
 			buffer.write("\n".getBytes());
 		}
 		buffer.flush();
-		
+		buffer.close();
 	}
 	
 	public static String openFile(int o) throws Exception{
 		FileDialog file=new FileDialog(new JFrame(),"打开文件",o);
 	
 			file.setVisible(true);
-			InputStream input=null;
 			String path=null;
 			if(file.getFile()!=null) {
 				path=file.getDirectory()+file.getFile();

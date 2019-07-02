@@ -6,7 +6,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileReader;
 import java.io.Reader;
-import java.sql.ResultSet;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,6 +23,7 @@ import DbOperation.*;
 
 
 public class LoginFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private LoginDaoImp dao;
 	private JTextField text1,text2;
 	public LoginFrame() {
@@ -123,6 +123,7 @@ public class LoginFrame extends JFrame{
 			tempFrame.add(ScrollPane);
 			tempFrame.setLocationRelativeTo(null);
 			tempFrame.setVisible(true);
+			input.close();
 			}catch(Exception ex) {
 				new NoticeFrame("´ò¿ªÊ§°Ü");
 			}

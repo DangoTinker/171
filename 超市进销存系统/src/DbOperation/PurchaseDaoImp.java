@@ -1,8 +1,6 @@
 package DbOperation;
 
 import java.sql.ResultSet;
-import java.util.LinkedList;
-import java.util.List;
 
 import ast.Purchase;
 
@@ -15,7 +13,6 @@ public class PurchaseDaoImp extends BaseDaoImp<Purchase>{
 	}
 	
 	public ResultSet queryAll(String l) throws Exception{
-		LinkedList<Purchase> o=new LinkedList<Purchase>();
 		Object[] temp=new Object[1];
 		temp[0]=l;
 		ResultSet rs=db.query("select * from purchase where lno=?", temp);

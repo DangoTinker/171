@@ -4,8 +4,6 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -15,8 +13,8 @@ import ast.Supplier;
 import ast.Tranable;
 
 public class SupplierFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private SupplierDaoImp dao;
-	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
@@ -37,8 +35,7 @@ public class SupplierFrame extends JFrame{
 	private JTextField mailText;
 	
 	
-	public SupplierFrame(String u) {
-		username=u;
+	public SupplierFrame() {
 		this.setSize(500,300);
 		list=new LinkedList<Tranable>();
 		try {
@@ -141,6 +138,7 @@ public class SupplierFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -215,7 +213,6 @@ public class SupplierFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Supplier oldSupplier=new Supplier((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4),(String)tableModel.getValueAt(n, 5));
 		Supplier newSupplier=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
 		int temp= dao.update(newSupplier);
 		tableModel.removeRow(n);

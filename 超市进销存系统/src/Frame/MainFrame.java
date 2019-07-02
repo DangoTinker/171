@@ -1,15 +1,10 @@
 package Frame;
-import java.awt.*;
-
-import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.*;
-import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
 import ast.AstMethod;
 public class MainFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private String username;
 	public MainFrame(String u) {
 		this.setSize(300,200);
@@ -67,7 +62,7 @@ public class MainFrame extends JFrame{
 			switch (((JButton)e.getSource()).getText()) {
 				case "供应商管理":{
 					
-					new SupplierFrame(username);
+					new SupplierFrame();
 					
 					break;
 				}
@@ -78,7 +73,7 @@ public class MainFrame extends JFrame{
 				}
 				
 				case "员工管理":{
-					new StaffFrame(username);
+					new StaffFrame();
 					break;
 				}
 				
@@ -95,7 +90,7 @@ public class MainFrame extends JFrame{
 				}
 				*/
 				case "联系人管理":{
-					new ContacterFrame(username);
+					new ContacterFrame();
 					break;
 				}
 				case "采购表管理":{

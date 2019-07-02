@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 public class BaseDaoImp<T> implements BaseDao<T>{
 	private DbOperation db;
 	private Class<T> EntityClass;
+	@SuppressWarnings("unchecked")
 	public BaseDaoImp() throws Exception{
 		db=DbOperation.getInstance();
 		if(!db.isLinked())

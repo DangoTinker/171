@@ -17,9 +17,10 @@ import DbOperation.UserMessageImp;
 import ast.UserMessage;
 
 public class userAddFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private UserMessageImp dao;
 	private JRadioButton jradio;
-	private JTextField text1,text2,text3;
+	private JTextField text1,text2;
 	public userAddFrame() {
 		try {
 			dao=new UserMessageImp();

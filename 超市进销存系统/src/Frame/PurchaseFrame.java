@@ -1,11 +1,8 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
@@ -18,19 +15,17 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import DbOperation.PurchaseDaoImp;
-import DbOperation.PurchaseListDaoImp;
 import ast.AstMethod;
 import ast.Purchase;
-import ast.PurchaseList;
 import ast.Tranable;
 
 public class PurchaseFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private PurchaseDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private String username;
 	private JTable table;
-	private JFrame frame;
 	private String path=null;
 	private String listLno;
 	private JLabel lnoLabel=new JLabel("清单编号");
@@ -135,6 +130,7 @@ public class PurchaseFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll(listLno);
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -176,7 +172,6 @@ public class PurchaseFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Purchase oldpurch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
 		Purchase newpurch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
 		int temp= dao.update( newpurch);
 		tableModel.removeRow(n);

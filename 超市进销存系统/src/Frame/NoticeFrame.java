@@ -4,6 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 public class NoticeFrame extends JFrame{
+	
+	private static final long serialVersionUID = -2985746048997709736L;
 	private JButton button;
 	public NoticeFrame(String a) {
 		JLabel tempLabel=new JLabel(a);

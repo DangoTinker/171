@@ -1,10 +1,8 @@
 package Frame;
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.FileInputStream;
-import java.io.InputStream;
 import java.sql.ResultSet;
 import java.util.LinkedList;
 
@@ -18,18 +16,15 @@ import javax.swing.table.DefaultTableModel;
 
 import DbOperation.*;
 import ast.AstMethod;
-import ast.Goods;
 import ast.Staff;
-import ast.Supplier;
 import ast.Tranable;
 
 public class StaffFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private StaffDaoImp dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
-	private String username;
 	private JTable table;
-	private JFrame frame;
 	private byte[] iconFile;
 	private String path=null;
 	private JLabel stnoLabel=new JLabel("编号");
@@ -47,9 +42,8 @@ public class StaffFrame extends JFrame{
 	private JButton iconFileButton=new JButton("打开文件");
 	
 	
-	public StaffFrame(String u) {
+	public StaffFrame() {
 		this.setSize(500, 300);
-		username=u;
 		try {
 			list=new LinkedList<Tranable>();
 			dao=new StaffDaoImp();
@@ -67,7 +61,7 @@ public class StaffFrame extends JFrame{
 		JPanel panel=new JPanel();
 		this.add(panel);
 		
-		table=table=new JTable(tableModel);
+		table=new JTable(tableModel);
 		panel.add(table.getTableHeader());
 		panel.add(table);
 		
@@ -138,6 +132,7 @@ public class StaffFrame extends JFrame{
 					FileInputStream in=new FileInputStream(path);
 					iconFile=in.readAllBytes();
 					iconFileLabel.setText(path);
+					in.close();
 				}catch(Exception ex) {
 					new NoticeFrame("打开文件失败"+ex.getMessage());
 				}
@@ -153,6 +148,7 @@ public class StaffFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
+					@SuppressWarnings("unchecked")
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -197,7 +193,6 @@ public class StaffFrame extends JFrame{
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Staff oldStaff=new Staff((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(double)tableModel.getValueAt(n, 4),(byte[])tableModel.getValueAt(n, 5));
 		Staff newStaff=new Staff(stnoText.getText(),stnameText.getText(),stlevelText.getText(),phoneText.getText(),Double.valueOf(salaryText.getText()),iconFile);
 		int temp= dao.update(newStaff);
 		tableModel.removeRow(n);

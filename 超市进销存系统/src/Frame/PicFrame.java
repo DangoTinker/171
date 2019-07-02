@@ -9,10 +9,9 @@ import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 
-import Frame.NoticeFrame.ButtonListener;
-import Frame.NoticeFrame.Enter;
 
 public class PicFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private JButton button;
 	public PicFrame(byte[] pic) {
 		JLabel picLabel=new JLabel();
