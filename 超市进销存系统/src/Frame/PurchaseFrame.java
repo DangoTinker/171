@@ -4,6 +4,7 @@ import java.awt.FileDialog;
 import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 
@@ -15,83 +16,62 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.GoodsDao;
-import DbOperation.SupplierDao;
+import DbOperation.PurchaseDao;
 import ast.AstMethod;
-import ast.Goods;
-import ast.Supplier;
+import ast.Purchase;
 import ast.Tranable;
 
-public class GoodsFrame extends JFrame{
-	private GoodsDao dao;
-	private String username;
+public class PurchaseFrame extends JFrame{
+	private PurchaseDao dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
+	private String username;
 	private JTable table;
 	private JFrame frame;
-	private String path;
-	
-	private JLabel gnoLabel;
-	private JLabel gnameLabel;
-	private JLabel simplyLabel;
-	private JLabel snoLabel;
-	private JLabel priceLabel;
-	
-	private JTextField gnoText;
-	private JTextField gnameText;
-	private JTextField simplyText;
-	private JTextField snoText;
-	private JTextField priceText;
-	
-	
-	
-	public GoodsFrame(String u) {
-		this.setSize(500, 300);
+	private String path=null;
+	private String listLno;
+	private JLabel lnoLabel=new JLabel("清单编号");
+	private JLabel gnoLabel=new JLabel("商品编号");
+	private JLabel countLabel=new JLabel("数量");
+
+	private JTextField lnoText=new JTextField(10);
+	private JTextField gnoText=new JTextField(10);
+	private JTextField countText=new JTextField(10);
+
+	public PurchaseFrame(String u,String l) {
+		this.setSize(250, 300);
+		listLno=l;
 		username=u;
 		try {
-			dao=GoodsDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
-			
+			dao=PurchaseDao.getInstance();
+			list=(LinkedList<Tranable>)dao.queryAll(listLno);
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
 		Object[] o=dao.getName();
 		tableModel=AstMethod.makeTableModel(o,list);
 		
-		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
 		this.add(panel);
+		
+		table=new JTable(tableModel);
 		panel.add(table.getTableHeader());
 		panel.add(table);
 		
-		gnoLabel=new JLabel("商品编号");
-		snoLabel=new JLabel("供应商编号");
-		gnameLabel=new JLabel("商品名");
-		simplyLabel=new JLabel("简介");
-		priceLabel=new JLabel("单价");
-		
-		gnoText=new JTextField(10);
-		snoText=new JTextField(10);
-		gnameText=new JTextField(10);
-		simplyText=new JTextField(10);
-		priceText=new JTextField(10);
-		
+		panel.add(lnoLabel);panel.add(lnoText);
 		panel.add(gnoLabel);panel.add(gnoText);
-		panel.add(snoLabel);panel.add(snoText);
-		panel.add(gnameLabel);panel.add(gnameText);
-		panel.add(simplyLabel);panel.add(simplyText);
-		panel.add(priceLabel);panel.add(priceText);
-		
-		
+		panel.add(countLabel);panel.add(countText);
+
 		JButton insertButton=new JButton("添加");
 		JButton deleteButton=new JButton("删除");
 		JButton updateButton=new JButton("修改");
 		JButton exportButton=new JButton("导出");
+		
 		panel.add(insertButton);
 		panel.add(deleteButton);
 		panel.add(updateButton);
 		panel.add(exportButton);
+
 		try {
 			if(AstMethod.isRoot(username)) {
 				insertButton.addMouseListener(new ButtonListener());
@@ -108,6 +88,7 @@ public class GoodsFrame extends JFrame{
 		} catch (Exception e) {
 			new NoticeFrame("检测权限失败"+e.getMessage());
 		}
+
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -131,6 +112,7 @@ public class GoodsFrame extends JFrame{
 					delete();
 				}catch(Exception ex) {
 					new NoticeFrame("删除失败"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -143,13 +125,11 @@ public class GoodsFrame extends JFrame{
 				}
 				break;
 			}
-			
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll(listLno);
 					AstMethod.exportCSV(ls, path);
-					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
 					if(path==null) {
 						new NoticeFrame("未设置路径");
@@ -166,8 +146,8 @@ public class GoodsFrame extends JFrame{
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
-		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		int i=dao.deleteOne(Goods);
+		Purchase purch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
+		int i=dao.deleteOne(purch);
 		if(i==0) {
 			return i;
 		}
@@ -175,33 +155,27 @@ public class GoodsFrame extends JFrame{
 		return i;
 	}
 	private int insert() throws Exception{
-
-		Goods temp=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int n=dao.insertOne(temp);
+		Purchase purch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
+		int n=dao.insertOne(purch);
 		if(n==0) {
 			return n;
 		}
 		
-		tableModel.addRow(temp.tran());
+		tableModel.addRow(purch.tran());
 		return n;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		Goods newSupplier=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		Purchase oldpurch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
+		Purchase newpurch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
+		int temp= dao.updateOne(oldpurch, newpurch);
 		tableModel.removeRow(n);
-		
-		
-		tableModel.addRow(newSupplier.tran());
+		tableModel.addRow(newpurch.tran());
 		if(temp==0) {
 			return 0;
 		}
 		return temp;
 	}
-	
-	
-	
 	
 }

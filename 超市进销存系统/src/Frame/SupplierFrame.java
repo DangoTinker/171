@@ -17,7 +17,7 @@ import ast.Tranable;
 
 public class SupplierFrame extends JFrame{
 	private SupplierDao dao;
-	
+	private String username;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
 	private JTable table;
@@ -38,7 +38,8 @@ public class SupplierFrame extends JFrame{
 	private JTextField mailText;
 	
 	
-	public SupplierFrame() {
+	public SupplierFrame(String u) {
+		username=u;
 		this.setSize(500,300);
 		try {
 			dao=SupplierDao.getInstance();
@@ -88,13 +89,19 @@ public class SupplierFrame extends JFrame{
 		panel.add(deleteButton);
 		panel.add(updateButton);
 		panel.add(exportButton);
+		
+	
 		insertButton.addMouseListener(new ButtonListener());
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
 		exportButton.addMouseListener(new ButtonListener());
+		
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+	
+
+	
 	
 	private class ButtonListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
@@ -132,6 +139,7 @@ public class SupplierFrame extends JFrame{
 					path=AstMethod.openFile(FileDialog.SAVE);
 					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
 					AstMethod.exportCSV(ls, path);
+					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
 					if(path==null) {
 						new NoticeFrame("未设置路径");

@@ -4,6 +4,7 @@ import java.awt.FileDialog;
 import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
 
@@ -15,99 +16,91 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.GoodsDao;
-import DbOperation.SupplierDao;
+import DbOperation.PurchaseListDao;
 import ast.AstMethod;
-import ast.Goods;
-import ast.Supplier;
+import ast.PurchaseList;
 import ast.Tranable;
 
-public class GoodsFrame extends JFrame{
-	private GoodsDao dao;
-	private String username;
+public class PurchaseListFrame extends JFrame{
+	private PurchaseListDao dao;
 	private DefaultTableModel tableModel;
 	private LinkedList<Tranable> list;
+	private String username;
 	private JTable table;
 	private JFrame frame;
-	private String path;
+	private String path=null;
 	
-	private JLabel gnoLabel;
-	private JLabel gnameLabel;
-	private JLabel simplyLabel;
-	private JLabel snoLabel;
-	private JLabel priceLabel;
+	private JLabel lnoLabel=new JLabel("编号");
+	private JLabel stnoLabel=new JLabel("员工编号");
+	private JLabel lcountLabel=new JLabel("数量");
+	private JLabel totalLabel=new JLabel("总计");
+	private JLabel timeLabel=new JLabel("时间");
+
+	private JTextField lnoText=new JTextField(10);
+	private JTextField stnoText=new JTextField(10);
+	private JTextField countText=new JTextField(10);
+	private JTextField totalText=new JTextField(10);
+	private JTextField timeText=new JTextField(10);
+
 	
-	private JTextField gnoText;
-	private JTextField gnameText;
-	private JTextField simplyText;
-	private JTextField snoText;
-	private JTextField priceText;
 	
-	
-	
-	public GoodsFrame(String u) {
+	public PurchaseListFrame(String u) {
 		this.setSize(500, 300);
 		username=u;
 		try {
-			dao=GoodsDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
 			
+			dao=PurchaseListDao.getInstance();
+			
+			list=(LinkedList<Tranable>)dao.queryAll();
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
 		}
 		Object[] o=dao.getName();
 		tableModel=AstMethod.makeTableModel(o,list);
 		
-		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
 		this.add(panel);
+		
+		table=new JTable(tableModel);
 		panel.add(table.getTableHeader());
 		panel.add(table);
 		
-		gnoLabel=new JLabel("商品编号");
-		snoLabel=new JLabel("供应商编号");
-		gnameLabel=new JLabel("商品名");
-		simplyLabel=new JLabel("简介");
-		priceLabel=new JLabel("单价");
-		
-		gnoText=new JTextField(10);
-		snoText=new JTextField(10);
-		gnameText=new JTextField(10);
-		simplyText=new JTextField(10);
-		priceText=new JTextField(10);
-		
-		panel.add(gnoLabel);panel.add(gnoText);
-		panel.add(snoLabel);panel.add(snoText);
-		panel.add(gnameLabel);panel.add(gnameText);
-		panel.add(simplyLabel);panel.add(simplyText);
-		panel.add(priceLabel);panel.add(priceText);
-		
+		panel.add(lnoLabel);panel.add(lnoText);
+		panel.add(stnoLabel);panel.add(stnoText);
+		panel.add(lcountLabel);panel.add(countText);
+		panel.add(totalLabel);panel.add(totalText);
+		panel.add(timeLabel);panel.add(timeText);
 		
 		JButton insertButton=new JButton("添加");
 		JButton deleteButton=new JButton("删除");
 		JButton updateButton=new JButton("修改");
 		JButton exportButton=new JButton("导出");
+		JButton purchaseButton=new JButton("明细");
 		panel.add(insertButton);
 		panel.add(deleteButton);
 		panel.add(updateButton);
 		panel.add(exportButton);
+		panel.add(purchaseButton);
 		try {
 			if(AstMethod.isRoot(username)) {
 				insertButton.addMouseListener(new ButtonListener());
 				deleteButton.addMouseListener(new ButtonListener());
 				updateButton.addMouseListener(new ButtonListener());
 				exportButton.addMouseListener(new ButtonListener());
+				purchaseButton.addMouseListener(new ButtonListener());
 			}
 			else {
 				insertButton.setEnabled(false);
 				deleteButton.setEnabled(false);
 				updateButton.setEnabled(false);
 				exportButton.addMouseListener(new ButtonListener());
+				purchaseButton.addMouseListener(new ButtonListener());
 			}
 		} catch (Exception e) {
 			new NoticeFrame("检测权限失败"+e.getMessage());
 		}
+		
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -131,6 +124,7 @@ public class GoodsFrame extends JFrame{
 					delete();
 				}catch(Exception ex) {
 					new NoticeFrame("删除失败"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -143,6 +137,23 @@ public class GoodsFrame extends JFrame{
 				}
 				break;
 			}
+		/*	case "打开文件":{
+				try {
+					path=AstMethod.openFile(FileDialog.LOAD);
+					FileInputStream in=new FileInputStream(path);
+					iconFile=in.readAllBytes();
+					iconFileLabel.setText(path);
+				}catch(Exception ex) {
+					new NoticeFrame("打开文件失败"+ex.getMessage());
+				}
+				break;
+			}
+			
+			case "查看头像":{
+				int n=table.getSelectedRow();
+				new PicFrame((byte[])tableModel.getValueAt(n, 5));
+				break;
+			}*/
 			
 			case "导出":{
 				try {
@@ -159,15 +170,18 @@ public class GoodsFrame extends JFrame{
 				}
 				break;
 			}
-			
+			case "明细":{
+				new PurchaseFrame(username,(String)tableModel.getValueAt(table.getSelectedRow(), 0));
+				break;
+			}
 			}
 		}
 	}
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
-		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		int i=dao.deleteOne(Goods);
+		PurchaseList Plist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
+		int i=dao.deleteOne(Plist);
 		if(i==0) {
 			return i;
 		}
@@ -175,33 +189,27 @@ public class GoodsFrame extends JFrame{
 		return i;
 	}
 	private int insert() throws Exception{
-
-		Goods temp=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int n=dao.insertOne(temp);
+		PurchaseList Plist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
+		int n=dao.insertOne(Plist);
 		if(n==0) {
 			return n;
 		}
 		
-		tableModel.addRow(temp.tran());
+		tableModel.addRow(Plist.tran());
 		return n;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		Goods newSupplier=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		PurchaseList oldPlist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
+		PurchaseList newPlist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
+		int temp= dao.updateOne(oldPlist, newPlist);
 		tableModel.removeRow(n);
-		
-		
-		tableModel.addRow(newSupplier.tran());
+		tableModel.addRow(newPlist.tran());
 		if(temp==0) {
 			return 0;
 		}
 		return temp;
 	}
-	
-	
-	
 	
 }
