@@ -1,6 +1,6 @@
 package ast;
 
-public class Supplier implements Tranable{
+public class Supplier {
 	private String sno;
 	private String sname;
 	private String simply;
@@ -48,7 +48,6 @@ public class Supplier implements Tranable{
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-	@Override
 	public Object[] tran() {
 		Object[] o=new Object[6];
 		o[0]=sno;o[1]=sname;o[2]=simply;o[3]=address;o[4]=sphone;o[5]=mail;

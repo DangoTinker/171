@@ -1,6 +1,6 @@
 package ast;
 
-public class Contacter implements Tranable{
+public class Contacter  {
 	private String cno;
 	private String sno;
 	private String cname;
@@ -10,7 +10,7 @@ public class Contacter implements Tranable{
 		setCno(a);setSno(b);setCname(c);setPhone(d);
 	}
 
-	@Override
+	
 	public Object[] tran() {
 		Object[] o=new Object[4];
 		o[0]=cno;o[1]=sno;o[2]=cname;o[3]=phone;

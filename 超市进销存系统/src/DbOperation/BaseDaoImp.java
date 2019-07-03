@@ -17,9 +17,11 @@ public class BaseDaoImp<T> implements BaseDao<T>{
         
        
         EntityClass = (Class<T>) type.getActualTypeArguments()[0];  
-
-		
-		
+        /*
+		System.out.println(getClass());
+		System.out.println(getClass().getGenericSuperclass());
+		System.out.println(EntityClass);
+         */
 	}
 	
 	
@@ -27,7 +29,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 	public int insert(T t) throws Exception {
 		String sql=getSQL("SQL_INSERT");
 		Object[] o=setArgs(t,"SQL_INSERT");
-		System.out.println(sql);
 		
 		return db.updateOne(sql, o);
 	}
@@ -37,7 +38,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 		
 		String sql=getSQL("SQL_DELETE");
 		Object[] o=setArgs(t,"SQL_DELETE");
-		System.out.println(sql);
 		
 		return db.updateOne(sql, o);
 	}
@@ -46,7 +46,6 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 	public int update(T t) throws Exception {
 		String sql=getSQL("SQL_UPDATE");
 		Object[] o=setArgs(t,"SQL_UPDATE");
-		System.out.println(sql);
 		
 		return db.updateOne(sql, o);
 	}

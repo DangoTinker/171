@@ -17,13 +17,13 @@ import javax.swing.table.DefaultTableModel;
 import DbOperation.*;
 import ast.AstMethod;
 import ast.Staff;
-import ast.Tranable;
+import ast.Supplier;
 
 public class StaffFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private StaffDaoImp dao;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Staff> list;
 	private JTable table;
 	private byte[] iconFile;
 	private String path=null;
@@ -45,7 +45,7 @@ public class StaffFrame extends JFrame{
 	public StaffFrame() {
 		this.setSize(500, 300);
 		try {
-			list=new LinkedList<Tranable>();
+			list=new LinkedList<Staff>();
 			dao=new StaffDaoImp();
 			ResultSet rs=dao.queryAll();
 			while(rs.next()) {
@@ -56,7 +56,12 @@ public class StaffFrame extends JFrame{
 			new NoticeFrame(e.getMessage());
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e) {
+			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
+		}
 		
 		JPanel panel=new JPanel();
 		this.add(panel);
@@ -90,8 +95,20 @@ public class StaffFrame extends JFrame{
 		updateButton.addMouseListener(new ButtonListener());
 		exportButton.addMouseListener(new ButtonListener());
 		picButton.addMouseListener(new ButtonListener());
+		table.addMouseListener(new TableListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+	}
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				stnoText.setText((String)tableModel.getValueAt(n, 0));
+				stnameText.setText((String)tableModel.getValueAt(n, 1));
+				stlevelText.setText((String)tableModel.getValueAt(n, 2));
+				phoneText.setText((String)tableModel.getValueAt(n,3));
+				salaryText.setText(String.valueOf(tableModel.getValueAt(n, 4)));
+		}
 	}
 	
 	private class ButtonListener extends MouseAdapter {
@@ -148,8 +165,12 @@ public class StaffFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					@SuppressWarnings("unchecked")
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						list.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes()));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -163,6 +184,12 @@ public class StaffFrame extends JFrame{
 			}
 			
 			}
+			
+			stnoText.setText("");
+			stnameText.setText("");
+			stlevelText.setText("");
+			phoneText.setText("");
+			salaryText.setText("");
 		}
 	}
 	
@@ -202,13 +229,14 @@ public class StaffFrame extends JFrame{
 		int n=table.getSelectedRow();
 		Staff newStaff=new Staff(stnoText.getText(),stnameText.getText(),stlevelText.getText(),phoneText.getText(),Double.valueOf(salaryText.getText()),iconFile);
 		int temp= dao.update(newStaff);
+		if(temp==0) {
+			return 0;
+		}
 		tableModel.removeRow(n);
 		
 		
 		tableModel.addRow(newStaff.tran());
-		if(temp==0) {
-			return 0;
-		}
+		
 		return temp;
 	}
 	

@@ -1,10 +1,10 @@
 package ast;
 
-public class UserMessage implements Tranable{
+public class UserMessage  {
 	private String username;
 	private String password;
 	private String level;
-	@Override
+	
 	public Object[] tran() {
 		Object[] o=new Object[3];
 		o[0]=username;

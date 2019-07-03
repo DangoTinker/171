@@ -17,13 +17,13 @@ import javax.swing.table.DefaultTableModel;
 import DbOperation.ContacterDaoImp;
 import ast.AstMethod;
 import ast.Contacter;
-import ast.Tranable;
+import ast.Supplier;
 
 public class ContacterFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private ContacterDaoImp dao;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Contacter> list;
 	private JTable table;
 
 	private String path;
@@ -45,7 +45,7 @@ public class ContacterFrame extends JFrame{
 		this.setSize(300, 300);
 		try {
 			dao=new ContacterDaoImp();
-			list=new LinkedList<Tranable>();
+			list=new LinkedList<Contacter>();
 			ResultSet rs=dao.queryAll();
 			while(rs.next()) {
 				list.add(new Contacter(rs.getString("cno"),rs.getString("sno"),rs.getString("cname"),rs.getString("phone")));	
@@ -55,7 +55,12 @@ public class ContacterFrame extends JFrame{
 			new NoticeFrame(e.getMessage());
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e) {
+			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
+		}
 		System.out.println(list.size());
 		
 		table=new JTable(tableModel);
@@ -93,9 +98,20 @@ public class ContacterFrame extends JFrame{
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
 		exportButton.addMouseListener(new ButtonListener());
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		table.addMouseListener(new TableListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+	}
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				cnoText.setText((String)tableModel.getValueAt(n, 0));
+				snoText.setText((String)tableModel.getValueAt(n, 1));
+				cnameText.setText((String)tableModel.getValueAt(n, 2));
+				phoneText.setText((String)tableModel.getValueAt(n, 3));
+				
+		}
 	}
 	
 	private class ButtonListener extends MouseAdapter {
@@ -132,8 +148,12 @@ public class ContacterFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					@SuppressWarnings("unchecked")
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						list.add(new Contacter(rs.getString("cno"),rs.getString("sno"),rs.getString("cname"),rs.getString("phone")));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -142,10 +162,15 @@ public class ContacterFrame extends JFrame{
 					}
 					else
 						new NoticeFrame("导出错误"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
 			}
+			cnoText.setText("");
+			snoText.setText("");
+			cnameText.setText("");
+			phoneText.setText("");
 		}
 	}
 	
@@ -179,13 +204,14 @@ public class ContacterFrame extends JFrame{
 //		Contacter oldSupplier=new Contacter((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3));
 		Contacter newSupplier=new Contacter(cnoText.getText(),snoText.getText(),cnameText.getText(),phoneText.getText());
 		int temp= dao.update(newSupplier);
+		if(temp==0) {
+			return 0;
+		}
 		tableModel.removeRow(n);
 		
 		
 		tableModel.addRow(newSupplier.tran());
-		if(temp==0) {
-			return 0;
-		}
+		
 		return temp;
 	}
 	

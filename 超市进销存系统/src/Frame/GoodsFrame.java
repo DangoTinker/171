@@ -17,14 +17,14 @@ import javax.swing.table.DefaultTableModel;
 import DbOperation.GoodsDaoImp;
 import ast.AstMethod;
 import ast.Goods;
-import ast.Tranable;
+import ast.Supplier;
 
 public class GoodsFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private GoodsDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Goods> list;
 	private JTable table;
 	private String path;
 	
@@ -46,7 +46,7 @@ public class GoodsFrame extends JFrame{
 		this.setSize(500, 300);
 		username=u;
 		try {
-			list=new LinkedList<Tranable>();
+			list=new LinkedList<Goods>();
 			dao=new GoodsDaoImp();
 			ResultSet rs=dao.queryAll();
 			while(rs.next()) {
@@ -57,7 +57,12 @@ public class GoodsFrame extends JFrame{
 			e.printStackTrace();
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e1) {
+			new NoticeFrame(e1.getMessage());
+			e1.printStackTrace();
+		}
 		
 		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
@@ -98,6 +103,7 @@ public class GoodsFrame extends JFrame{
 				deleteButton.addMouseListener(new ButtonListener());
 				updateButton.addMouseListener(new ButtonListener());
 				exportButton.addMouseListener(new ButtonListener());
+				table.addMouseListener(new TableListener());
 			}
 			else {
 				insertButton.setEnabled(false);
@@ -111,6 +117,22 @@ public class GoodsFrame extends JFrame{
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+	
+	
+
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				gnoText.setText((String)tableModel.getValueAt(n, 0)); 
+				gnameText.setText((String)tableModel.getValueAt(n, 1));  
+				simplyText.setText((String)tableModel.getValueAt(n, 2));  
+				snoText.setText((String)tableModel.getValueAt(n, 3));  
+				priceText.setText(String.valueOf(tableModel.getValueAt(n, 4))); 
+				
+		}
+	}
+	
 	
 	private class ButtonListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
@@ -148,8 +170,12 @@ public class GoodsFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					@SuppressWarnings("unchecked")
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						list.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -158,11 +184,20 @@ public class GoodsFrame extends JFrame{
 					}
 					else
 						new NoticeFrame("导出错误"+ex.getMessage());
+						ex.printStackTrace();
+
 				}
 				break;
 			}
 			
 			}
+			
+			gnoText.setText("");
+			gnameText.setText("");
+			simplyText.setText("");
+			snoText.setText("");
+			priceText.setText("");
+			
 		}
 	}
 	
@@ -199,13 +234,14 @@ public class GoodsFrame extends JFrame{
 //		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),((double)tableModel.getValueAt(n, 4)));
 		Goods newSupplier=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
 		int temp= dao.update(newSupplier);
+		if(temp==0) {
+			return 0;
+		}
 		tableModel.removeRow(n);
 		
 		
 		tableModel.addRow(newSupplier.tran());
-		if(temp==0) {
-			return 0;
-		}
+		
 		return temp;
 	}
 	
