@@ -22,6 +22,7 @@ public class userAddFrame extends JFrame{
 	private JRadioButton jradio;
 	private JTextField text1,text2;
 	public userAddFrame() {
+		this.setTitle("ÃÌº””√ªß");
 		try {
 			dao=new UserMessageImp();
 		}catch(Exception e) {

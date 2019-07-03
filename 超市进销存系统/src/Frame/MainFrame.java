@@ -7,7 +7,8 @@ public class MainFrame extends JFrame{
 	private static final long serialVersionUID = 1L;
 	private String username;
 	public MainFrame(String u) {
-		this.setSize(300,200);
+		this.setSize(350,150);
+		this.setTitle("主界面");
 		username=u;
 		JPanel panel=new JPanel();
 		JButton supplierButton=new JButton("供应商管理");

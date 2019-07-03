@@ -38,7 +38,7 @@ public class PurchaseFrame extends JFrame{
 	private JTextField countText=new JTextField(10);
 
 	public PurchaseFrame(String u,String l) {
-		this.setSize(250, 300);
+		this.setSize(300, 300);
 		listLno=l;
 		username=u;
 		lnoText.setText(listLno);
@@ -148,11 +148,11 @@ public class PurchaseFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					LinkedList<Purchase> ls=new LinkedList <Purchase>();
 					ResultSet rs=dao.queryAll(listLno);
 					while(rs.next()) {
 						
-						list.add(new Purchase(rs.getString("lno"),rs.getString("gno"),rs.getInt("count")));	
+						ls.add(new Purchase(rs.getString("lno"),rs.getString("gno"),rs.getInt("count")));	
 					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");

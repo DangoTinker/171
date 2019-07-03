@@ -43,7 +43,7 @@ public class PurchaseListFrame extends JFrame{
 	
 	
 	public PurchaseListFrame(String u) {
-		this.setSize(500, 300);
+		this.setSize(410, 300);
 		username=u;
 		try {
 			list=new LinkedList<PurchaseList>();
@@ -63,7 +63,6 @@ public class PurchaseListFrame extends JFrame{
 			tableModel=AstMethod.makeTableModel(o,list);
 		} catch (Exception e1) {
 			new NoticeFrame(e1.getMessage());
-			e1.printStackTrace();
 		}
 		
 		JPanel panel=new JPanel();
@@ -175,11 +174,11 @@ public class PurchaseListFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					LinkedList<PurchaseList> ls=new LinkedList <PurchaseList>();
 					ResultSet rs=dao.queryAll();
 					while(rs.next()) {
 						
-						list.add(new PurchaseList(rs.getString("lno"),rs.getString("stno"),rs.getInt("lcount"),rs.getDouble("total"),rs.getString("time")));	
+						ls.add(new PurchaseList(rs.getString("lno"),rs.getString("stno"),rs.getInt("lcount"),rs.getDouble("total"),rs.getString("time")));	
 					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -193,7 +192,12 @@ public class PurchaseListFrame extends JFrame{
 				break;
 			}
 			case "明细":{
-				new PurchaseFrame(username,(String)tableModel.getValueAt(table.getSelectedRow(), 0));
+				if(table.getSelectedRow()!=-1) {
+					new PurchaseFrame(username,(String)tableModel.getValueAt(table.getSelectedRow(), 0));
+				}
+				else {
+					new NoticeFrame("未选中");
+				}
 				break;
 			}
 			}

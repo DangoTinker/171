@@ -43,7 +43,8 @@ public class StaffFrame extends JFrame{
 	
 	
 	public StaffFrame() {
-		this.setSize(500, 300);
+		this.setSize(450, 300);
+		this.setTitle("员工管理");
 		try {
 			list=new LinkedList<Staff>();
 			dao=new StaffDaoImp();
@@ -60,7 +61,6 @@ public class StaffFrame extends JFrame{
 			tableModel=AstMethod.makeTableModel(o,list);
 		} catch (Exception e) {
 			new NoticeFrame(e.getMessage());
-			e.printStackTrace();
 		}
 		
 		JPanel panel=new JPanel();
@@ -165,11 +165,11 @@ public class StaffFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					LinkedList<Staff> ls=new LinkedList <Staff>();
 					ResultSet rs=dao.queryAll();
 					while(rs.next()) {
 						
-						list.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes()));	
+						ls.add(new Staff(rs.getString("stno"),rs.getString("stname"),rs.getString("stlevel"),rs.getString("phone"),rs.getDouble("salary"),(((java.sql.Blob)rs.getBlob("icon")).getBinaryStream()).readAllBytes()));	
 					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
@@ -185,11 +185,13 @@ public class StaffFrame extends JFrame{
 			
 			}
 			
-			stnoText.setText("");
-			stnameText.setText("");
-			stlevelText.setText("");
-			phoneText.setText("");
-			salaryText.setText("");
+			if(((JButton)e.getSource()).getText()!="打开文件") {
+				stnoText.setText("");
+				stnameText.setText("");
+				stlevelText.setText("");
+				phoneText.setText("");
+				salaryText.setText("");
+			}
 		}
 	}
 	

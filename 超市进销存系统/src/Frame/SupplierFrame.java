@@ -35,7 +35,8 @@ public class SupplierFrame extends JFrame{
 	
 	
 	public SupplierFrame() {
-		this.setSize(500,300);
+		this.setSize(465,300);
+		this.setTitle("供应商管理");
 		list=new LinkedList<Supplier>();
 		try {
 			dao=new SupplierDaoImp();

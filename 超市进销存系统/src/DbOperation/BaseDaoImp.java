@@ -12,16 +12,8 @@ public class BaseDaoImp<T> implements BaseDao<T>{
 		if(!db.isLinked())
 			db.linkDb();
 		
-		ParameterizedType type = (ParameterizedType) (getClass().getGenericSuperclass());
-                      
-        
-       
+		ParameterizedType type = (ParameterizedType) (getClass().getGenericSuperclass());  
         EntityClass = (Class<T>) type.getActualTypeArguments()[0];  
-        /*
-		System.out.println(getClass());
-		System.out.println(getClass().getGenericSuperclass());
-		System.out.println(EntityClass);
-         */
 	}
 	
 	

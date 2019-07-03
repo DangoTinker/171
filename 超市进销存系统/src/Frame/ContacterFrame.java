@@ -42,7 +42,7 @@ public class ContacterFrame extends JFrame{
 	
 	
 	public ContacterFrame() {
-		this.setSize(300, 300);
+		this.setSize(375, 300);
 		try {
 			dao=new ContacterDaoImp();
 			list=new LinkedList<Contacter>();
@@ -61,7 +61,6 @@ public class ContacterFrame extends JFrame{
 			new NoticeFrame(e.getMessage());
 			e.printStackTrace();
 		}
-		System.out.println(list.size());
 		
 		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
@@ -148,11 +147,11 @@ public class ContacterFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					LinkedList<Contacter> ls=new LinkedList <Contacter>();
 					ResultSet rs=dao.queryAll();
 					while(rs.next()) {
 						
-						list.add(new Contacter(rs.getString("cno"),rs.getString("sno"),rs.getString("cname"),rs.getString("phone")));	
+						ls.add(new Contacter(rs.getString("cno"),rs.getString("sno"),rs.getString("cname"),rs.getString("phone")));	
 					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");

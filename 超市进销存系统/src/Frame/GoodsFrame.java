@@ -43,7 +43,7 @@ public class GoodsFrame extends JFrame{
 	
 	
 	public GoodsFrame(String u) {
-		this.setSize(500, 300);
+		this.setSize(425, 300);
 		username=u;
 		try {
 			list=new LinkedList<Goods>();
@@ -170,11 +170,11 @@ public class GoodsFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					LinkedList<Goods> ls=new LinkedList <Goods>();
 					ResultSet rs=dao.queryAll();
 					while(rs.next()) {
 						
-						list.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
+						ls.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
 					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
