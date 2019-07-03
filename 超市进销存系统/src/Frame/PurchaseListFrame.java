@@ -1,11 +1,9 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -16,18 +14,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.PurchaseListDao;
+import DbOperation.*;
 import ast.AstMethod;
 import ast.PurchaseList;
-import ast.Tranable;
+import ast.Supplier;
 
 public class PurchaseListFrame extends JFrame{
-	private PurchaseListDao dao;
+	private static final long serialVersionUID = 1L;
+	private PurchaseListDaoImp dao;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<PurchaseList> list;
 	private String username;
 	private JTable table;
-	private JFrame frame;
 	private String path=null;
 	
 	private JLabel lnoLabel=new JLabel("编号");
@@ -45,19 +43,27 @@ public class PurchaseListFrame extends JFrame{
 	
 	
 	public PurchaseListFrame(String u) {
-		this.setSize(500, 300);
+		this.setSize(410, 300);
 		username=u;
 		try {
+			list=new LinkedList<PurchaseList>();
+			dao=new PurchaseListDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new PurchaseList(rs.getString("lno"),rs.getString("stno"),rs.getInt("lcount"),rs.getDouble("total"),rs.getString("time")));	
+			}
 			
-			dao=PurchaseListDao.getInstance();
 			
-			list=(LinkedList<Tranable>)dao.queryAll();
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 			e.printStackTrace();
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e1) {
+			new NoticeFrame(e1.getMessage());
+		}
 		
 		JPanel panel=new JPanel();
 		this.add(panel);
@@ -89,6 +95,7 @@ public class PurchaseListFrame extends JFrame{
 				updateButton.addMouseListener(new ButtonListener());
 				exportButton.addMouseListener(new ButtonListener());
 				purchaseButton.addMouseListener(new ButtonListener());
+				table.addMouseListener(new TableListener());
 			}
 			else {
 				insertButton.setEnabled(false);
@@ -104,7 +111,16 @@ public class PurchaseListFrame extends JFrame{
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
-	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				lnoText.setText((String)tableModel.getValueAt(n, 0)); 
+				stnoText.setText((String)tableModel.getValueAt(n, 1)); 
+				countText.setText(String.valueOf(tableModel.getValueAt(n, 2))); 
+				totalText.setText(String.valueOf(tableModel.getValueAt(n, 3))); 
+				timeText.setText((String)tableModel.getValueAt(n, 4)); 
+		}
+	}
 	private class ButtonListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
 			switch (((JButton)e.getSource()).getText()) {
@@ -158,7 +174,12 @@ public class PurchaseListFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<PurchaseList> ls=new LinkedList <PurchaseList>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						ls.add(new PurchaseList(rs.getString("lno"),rs.getString("stno"),rs.getInt("lcount"),rs.getDouble("total"),rs.getString("time")));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -171,17 +192,28 @@ public class PurchaseListFrame extends JFrame{
 				break;
 			}
 			case "明细":{
-				new PurchaseFrame(username,(String)tableModel.getValueAt(table.getSelectedRow(), 0));
+				if(table.getSelectedRow()!=-1) {
+					new PurchaseFrame(username,(String)tableModel.getValueAt(table.getSelectedRow(), 0));
+				}
+				else {
+					new NoticeFrame("未选中");
+				}
 				break;
 			}
 			}
+			lnoText.setText("");
+			stnoText.setText("");
+			countText.setText("");
+			totalText.setText("");
+			timeText.setText("");
+			
 		}
 	}
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		PurchaseList Plist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
-		int i=dao.deleteOne(Plist);
+		int i=dao.delete(Plist);
 		if(i==0) {
 			return i;
 		}
@@ -190,25 +222,30 @@ public class PurchaseListFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		PurchaseList Plist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
-		int n=dao.insertOne(Plist);
+		int n=dao.insert(Plist);
 		if(n==0) {
 			return n;
 		}
 		
 		tableModel.addRow(Plist.tran());
+		lnoText.setText(""); 
+		stnoText.setText("");
+		countText.setText("");
+		totalText.setText("");
+		timeText.setText("");
 		return n;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		PurchaseList oldPlist=new PurchaseList((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2),(double)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4));
 		PurchaseList newPlist=new PurchaseList(lnoText.getText(),stnoText.getText(),Integer.valueOf(countText.getText()),Double.valueOf(totalText.getText()),timeText.getText());
-		int temp= dao.updateOne(oldPlist, newPlist);
-		tableModel.removeRow(n);
-		tableModel.addRow(newPlist.tran());
+		int temp= dao.update(newPlist);
 		if(temp==0) {
 			return 0;
 		}
+		tableModel.removeRow(n);
+		tableModel.addRow(newPlist.tran());
+		
 		return temp;
 	}
 	

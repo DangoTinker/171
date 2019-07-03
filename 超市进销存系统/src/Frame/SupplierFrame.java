@@ -4,22 +4,18 @@ import java.awt.*;
 import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.io.FileInputStream;
-import java.io.InputStream;
 import java.util.*;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.SupplierDao;
+import DbOperation.*;
 import ast.AstMethod;
 import ast.Supplier;
-import ast.Tranable;
 
 public class SupplierFrame extends JFrame{
-	private SupplierDao dao;
-	private String username;
+	private static final long serialVersionUID = 1L;
+	private SupplierDaoImp dao;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Supplier> list;
 	private JTable table;
 //	private int oldRowCount;
 	private String path=null;
@@ -38,19 +34,29 @@ public class SupplierFrame extends JFrame{
 	private JTextField mailText;
 	
 	
-	public SupplierFrame(String u) {
-		username=u;
-		this.setSize(500,300);
+	public SupplierFrame() {
+		this.setSize(465,300);
+		this.setTitle("供应商管理");
+		list=new LinkedList<Supplier>();
 		try {
-			dao=SupplierDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
-			
+			dao=new SupplierDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				
+				list.add(new Supplier(rs.getString("sno"),rs.getString("sname"),rs.getString("simply"),rs.getString("address"),rs.getString("sphone"),rs.getString("mail")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
 		
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e) {
+			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
+		}
 		
 		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
@@ -95,7 +101,7 @@ public class SupplierFrame extends JFrame{
 		deleteButton.addMouseListener(new ButtonListener());
 		updateButton.addMouseListener(new ButtonListener());
 		exportButton.addMouseListener(new ButtonListener());
-		
+		table.addMouseListener(new TableListener());
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
@@ -112,6 +118,7 @@ public class SupplierFrame extends JFrame{
 					insert();
 				}catch(Exception ex) {
 					new NoticeFrame("添加失败"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -137,7 +144,14 @@ public class SupplierFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					@SuppressWarnings("unchecked")
+					
+					LinkedList<Supplier> ls=new LinkedList <Supplier>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						ls.add(new Supplier(rs.getString("sno"),rs.getString("sname"),rs.getString("simply"),rs.getString("address"),rs.getString("sphone"),rs.getString("mail")));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -146,6 +160,7 @@ public class SupplierFrame extends JFrame{
 					}
 					else
 						new NoticeFrame("导出错误"+ex.getMessage());
+						ex.printStackTrace();
 				}
 				break;
 			}
@@ -153,6 +168,27 @@ public class SupplierFrame extends JFrame{
 			
 			
 			}
+			
+			snoText.setText(""); 
+			snameText.setText(""); 
+			simplyText.setText(""); 
+			addressText.setText(""); 
+			sphoneText.setText(""); 
+			mailText.setText(""); 
+			
+		}
+	}
+	
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				snoText.setText((String) tableModel.getValueAt(n, 0));
+				snameText.setText((String) tableModel.getValueAt(n, 1));
+				simplyText.setText((String) tableModel.getValueAt(n, 2));
+				addressText.setText((String) tableModel.getValueAt(n, 3)); 
+				sphoneText.setText((String) tableModel.getValueAt(n, 4)); 
+				mailText.setText((String) tableModel.getValueAt(n, 5)); 
 		}
 	}
 	
@@ -186,7 +222,7 @@ public class SupplierFrame extends JFrame{
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Supplier supplier=new Supplier((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4),(String)tableModel.getValueAt(n, 5));
-		int i=dao.deleteOne(supplier);
+		int i=dao.delete(supplier);
 		if(i==0) {
 			return i;
 		}
@@ -195,27 +231,40 @@ public class SupplierFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		Supplier temp=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
-		int n=dao.insertOne(temp);
+		/*int n=dao.insertOne(temp);
 		if(n==0) {
 			return n;
 		}
 		
 		tableModel.addRow(temp.tran());
 		return n;
+		*/
+		SupplierDaoImp d=new SupplierDaoImp();
+		int n=d.insert(temp);
+		if(n==0) {
+			return 0;
+		}
+		tableModel.addRow(temp.tran());
+		snoText.setText("");
+		snameText.setText("");
+		simplyText.setText("");
+		addressText.setText("");
+		sphoneText.setText("");
+		mailText.setText("");
+		return 0;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Supplier oldSupplier=new Supplier((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(String)tableModel.getValueAt(n, 4),(String)tableModel.getValueAt(n, 5));
 		Supplier newSupplier=new Supplier(snoText.getText(),snameText.getText(),simplyText.getText(),addressText.getText(),sphoneText.getText(),mailText.getText());
-		int temp= dao.updateOne(oldSupplier, newSupplier);
-		tableModel.removeRow(n);
-		
-		
-		tableModel.addRow(newSupplier.tran());
+		int temp= dao.update(newSupplier);
 		if(temp==0) {
 			return 0;
+			
 		}
+		tableModel.removeRow(n);
+		tableModel.addRow(newSupplier.tran());
+		
 		return temp;
 	}
 	

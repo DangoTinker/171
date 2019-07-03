@@ -12,14 +12,15 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import DbOperation.LoginDao;
+import DbOperation.LoginDaoImp;
 
 public class LogupFrame extends JFrame{
-	private LoginDao dao;
+	private static final long serialVersionUID = 1L;
+	private LoginDaoImp dao;
 	private JTextField text1,text2;
 	public LogupFrame() {
 		try {
-			dao=LoginDao.getInstance();
+			dao=new LoginDaoImp();
 		}catch(Exception e) {
 			new NoticeFrame("¡¨Ω” ß∞‹"+e.getMessage());
 		}

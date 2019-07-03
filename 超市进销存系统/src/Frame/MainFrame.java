@@ -1,18 +1,14 @@
 package Frame;
-import java.awt.*;
-
-import java.sql.*;
 import javax.swing.*;
 import java.awt.event.*;
-import java.util.*;
-import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
 import ast.AstMethod;
 public class MainFrame extends JFrame{
+	private static final long serialVersionUID = 1L;
 	private String username;
 	public MainFrame(String u) {
-		this.setSize(300,200);
+		this.setSize(350,150);
+		this.setTitle("主界面");
 		username=u;
 		JPanel panel=new JPanel();
 		JButton supplierButton=new JButton("供应商管理");
@@ -20,14 +16,14 @@ public class MainFrame extends JFrame{
 		JButton staffButton=new JButton("员工管理");
 		JButton contacterButton=new JButton("联系人管理");
 		JButton userAddButton=new JButton("添加用户");
-		JButton userStaffButton=new JButton("个人信息");
+//		JButton userStaffButton=new JButton("个人信息");
 		JButton purchaseListButton=new JButton("采购表管理");
 		this.add(panel);
 		panel.add(supplierButton);
 		panel.add(goodsButton);
 		panel.add(staffButton);
 		panel.add(userAddButton);
-		panel.add(userStaffButton);
+//		panel.add(userStaffButton);
 		panel.add(contacterButton);
 		panel.add(purchaseListButton);
 		try {
@@ -38,13 +34,13 @@ public class MainFrame extends JFrame{
 				contacterButton.addMouseListener(new ButtonListener());
 				
 				goodsButton.addMouseListener(new ButtonListener());
-				userStaffButton.addMouseListener(new ButtonListener());
+//				userStaffButton.addMouseListener(new ButtonListener());
 				purchaseListButton.addMouseListener(new ButtonListener());
 				
 			}
 			else {
 				goodsButton.addMouseListener(new ButtonListener());
-				userStaffButton.addMouseListener(new ButtonListener());
+//				userStaffButton.addMouseListener(new ButtonListener());
 				
 				supplierButton.setEnabled(false);
 				staffButton.setEnabled(false);
@@ -67,7 +63,7 @@ public class MainFrame extends JFrame{
 			switch (((JButton)e.getSource()).getText()) {
 				case "供应商管理":{
 					
-					new SupplierFrame(username);
+					new SupplierFrame();
 					
 					break;
 				}
@@ -78,23 +74,24 @@ public class MainFrame extends JFrame{
 				}
 				
 				case "员工管理":{
-					new StaffFrame(username);
+					new StaffFrame();
 					break;
 				}
 				
 				case "添加用户":{
 					
-					new NoticeFrame("权限不足");
+					new userAddFrame();
 					
 					break;
 				}
-				
+				/*
 				case "个人信息":{
 					new userStaffFrame(username);
 					break;
 				}
+				*/
 				case "联系人管理":{
-					new ContacterFrame(username);
+					new ContacterFrame();
 					break;
 				}
 				case "采购表管理":{

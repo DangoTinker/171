@@ -1,16 +1,16 @@
 package ast;
 
-public class Supplier implements Tranable{
+public class Supplier {
 	private String sno;
 	private String sname;
 	private String simply;
 	private String address;
-	private String phone;
+	private String sphone;
 	private String mail;
 	
 	
 	public Supplier(String a,String b,String c,String d,String e,String f) {
-		sno=a;sname=b;simply=c;address=d;phone=e;mail=f;
+		sno=a;sname=b;simply=c;address=d;sphone=e;mail=f;
 	}
 	public String getSno() {
 		return sno;
@@ -37,10 +37,10 @@ public class Supplier implements Tranable{
 		this.address = address;
 	}
 	public String getPhone() {
-		return phone;
+		return sphone;
 	}
 	public void setPhone(String phone) {
-		this.phone = phone;
+		this.sphone = phone;
 	}
 	public String getMail() {
 		return mail;
@@ -48,10 +48,10 @@ public class Supplier implements Tranable{
 	public void setMail(String mail) {
 		this.mail = mail;
 	}
-	@Override
 	public Object[] tran() {
 		Object[] o=new Object[6];
-		o[0]=sno;o[1]=sname;o[2]=simply;o[3]=address;o[4]=phone;o[5]=mail;
+		o[0]=sno;o[1]=sname;o[2]=simply;o[3]=address;o[4]=sphone;o[5]=mail;
 		return o;
 	}
+
 }

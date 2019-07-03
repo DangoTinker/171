@@ -1,6 +1,6 @@
 package ast;
 
-public class PurchaseList implements Tranable{
+public class PurchaseList{
 	private String lno;
 	private String stno;
 	private int    count;
@@ -11,7 +11,7 @@ public class PurchaseList implements Tranable{
 		setLno(a);setStno(b);setCount(c);setTotal(d);setTime(e);
 	}
 
-	@Override
+	
 	public Object[] tran() {
 		Object[] o=new Object[5];
 		o[0]=lno;o[1]=stno;o[2]=count;o[3]=total;o[4]=time;
@@ -57,7 +57,7 @@ public class PurchaseList implements Tranable{
 	public void setTime(String time) {
 		this.time = time;
 	}
-	
+
 	
 
 }

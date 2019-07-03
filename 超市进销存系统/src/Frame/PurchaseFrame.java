@@ -1,11 +1,9 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.FileInputStream;
-import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -16,18 +14,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.PurchaseDao;
+import DbOperation.PurchaseDaoImp;
 import ast.AstMethod;
 import ast.Purchase;
-import ast.Tranable;
+import ast.Supplier;
 
 public class PurchaseFrame extends JFrame{
-	private PurchaseDao dao;
+	private static final long serialVersionUID = 1L;
+	private PurchaseDaoImp dao;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Purchase> list;
 	private String username;
 	private JTable table;
-	private JFrame frame;
 	private String path=null;
 	private String listLno;
 	private JLabel lnoLabel=new JLabel("清单编号");
@@ -35,21 +33,33 @@ public class PurchaseFrame extends JFrame{
 	private JLabel countLabel=new JLabel("数量");
 
 	private JTextField lnoText=new JTextField(10);
+	
 	private JTextField gnoText=new JTextField(10);
 	private JTextField countText=new JTextField(10);
 
 	public PurchaseFrame(String u,String l) {
-		this.setSize(250, 300);
+		this.setSize(300, 300);
 		listLno=l;
 		username=u;
+		lnoText.setText(listLno);
+		lnoText.setEnabled(false);
 		try {
-			dao=PurchaseDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll(listLno);
+			list=new LinkedList<Purchase>();
+			dao=new PurchaseDaoImp();
+			ResultSet rs=dao.queryAll(listLno);
+			while(rs.next()) {
+				list.add(new Purchase(rs.getString("lno"),rs.getString("gno"),rs.getInt("count")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e1) {
+			new NoticeFrame(e1.getMessage());
+			e1.printStackTrace();
+		}
 		
 		JPanel panel=new JPanel();
 		this.add(panel);
@@ -78,6 +88,7 @@ public class PurchaseFrame extends JFrame{
 				deleteButton.addMouseListener(new ButtonListener());
 				updateButton.addMouseListener(new ButtonListener());
 				exportButton.addMouseListener(new ButtonListener());
+				table.addMouseListener(new TableListener());
 			}
 			else {
 				insertButton.setEnabled(false);
@@ -91,6 +102,15 @@ public class PurchaseFrame extends JFrame{
 
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
+	}
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+//				lnoText.setText((String)tableModel.getValueAt(n, 0)); 
+				gnoText.setText((String)tableModel.getValueAt(n, 1)); 
+				countText.setText(String.valueOf(tableModel.getValueAt(n, 2))); 
+		}
 	}
 	
 	private class ButtonListener extends MouseAdapter {
@@ -128,8 +148,15 @@ public class PurchaseFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll(listLno);
+					LinkedList<Purchase> ls=new LinkedList <Purchase>();
+					ResultSet rs=dao.queryAll(listLno);
+					while(rs.next()) {
+						
+						ls.add(new Purchase(rs.getString("lno"),rs.getString("gno"),rs.getInt("count")));	
+					}
 					AstMethod.exportCSV(ls, path);
+					new NoticeFrame("导出成功");
+
 				}catch(Exception ex) {
 					if(path==null) {
 						new NoticeFrame("未设置路径");
@@ -141,13 +168,17 @@ public class PurchaseFrame extends JFrame{
 			}
 			
 			}
+			
+			
+			gnoText.setText("");
+			countText.setText("");
 		}
 	}
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
 		Purchase purch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
-		int i=dao.deleteOne(purch);
+		int i=dao.delete(purch);
 		if(i==0) {
 			return i;
 		}
@@ -156,25 +187,27 @@ public class PurchaseFrame extends JFrame{
 	}
 	private int insert() throws Exception{
 		Purchase purch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
-		int n=dao.insertOne(purch);
+		int n=dao.insert(purch);
 		if(n==0) {
 			return n;
 		}
 		
 		tableModel.addRow(purch.tran());
+		gnoText.setText(""); 
+		countText.setText("");  
 		return n;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Purchase oldpurch=new Purchase((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(int)tableModel.getValueAt(n, 2));
 		Purchase newpurch=new Purchase(lnoText.getText(),gnoText.getText(),Integer.valueOf(countText.getText()));
-		int temp= dao.updateOne(oldpurch, newpurch);
-		tableModel.removeRow(n);
-		tableModel.addRow(newpurch.tran());
+		int temp= dao.update( newpurch);
 		if(temp==0) {
 			return 0;
 		}
+		tableModel.removeRow(n);
+		tableModel.addRow(newpurch.tran());
+		
 		return temp;
 	}
 	

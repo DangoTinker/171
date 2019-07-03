@@ -1,10 +1,9 @@
 package Frame;
 
 import java.awt.FileDialog;
-import java.awt.Label;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.InputStream;
+import java.sql.ResultSet;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
@@ -15,21 +14,18 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-import DbOperation.DbOperation;
-import DbOperation.GoodsDao;
-import DbOperation.SupplierDao;
+import DbOperation.GoodsDaoImp;
 import ast.AstMethod;
 import ast.Goods;
 import ast.Supplier;
-import ast.Tranable;
 
 public class GoodsFrame extends JFrame{
-	private GoodsDao dao;
+	private static final long serialVersionUID = 1L;
+	private GoodsDaoImp dao;
 	private String username;
 	private DefaultTableModel tableModel;
-	private LinkedList<Tranable> list;
+	private LinkedList<Goods> list;
 	private JTable table;
-	private JFrame frame;
 	private String path;
 	
 	private JLabel gnoLabel;
@@ -47,17 +43,26 @@ public class GoodsFrame extends JFrame{
 	
 	
 	public GoodsFrame(String u) {
-		this.setSize(500, 300);
+		this.setSize(425, 300);
 		username=u;
 		try {
-			dao=GoodsDao.getInstance();
-			list=(LinkedList<Tranable>)dao.queryAll();
-			
+			list=new LinkedList<Goods>();
+			dao=new GoodsDaoImp();
+			ResultSet rs=dao.queryAll();
+			while(rs.next()) {
+				list.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
+			}
 		}catch(Exception e) {
 			new NoticeFrame(e.getMessage());
+			e.printStackTrace();
 		}
 		Object[] o=dao.getName();
-		tableModel=AstMethod.makeTableModel(o,list);
+		try {
+			tableModel=AstMethod.makeTableModel(o,list);
+		} catch (Exception e1) {
+			new NoticeFrame(e1.getMessage());
+			e1.printStackTrace();
+		}
 		
 		table=new JTable(tableModel);
 		JPanel panel=new JPanel();
@@ -98,6 +103,7 @@ public class GoodsFrame extends JFrame{
 				deleteButton.addMouseListener(new ButtonListener());
 				updateButton.addMouseListener(new ButtonListener());
 				exportButton.addMouseListener(new ButtonListener());
+				table.addMouseListener(new TableListener());
 			}
 			else {
 				insertButton.setEnabled(false);
@@ -111,6 +117,22 @@ public class GoodsFrame extends JFrame{
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
+	
+	
+
+	
+	private class TableListener extends MouseAdapter {
+		public void mousePressed(MouseEvent e) {
+				int n=table.getSelectedRow();
+				gnoText.setText((String)tableModel.getValueAt(n, 0)); 
+				gnameText.setText((String)tableModel.getValueAt(n, 1));  
+				simplyText.setText((String)tableModel.getValueAt(n, 2));  
+				snoText.setText((String)tableModel.getValueAt(n, 3));  
+				priceText.setText(String.valueOf(tableModel.getValueAt(n, 4))); 
+				
+		}
+	}
+	
 	
 	private class ButtonListener extends MouseAdapter {
 		public void mousePressed(MouseEvent e) {
@@ -131,6 +153,7 @@ public class GoodsFrame extends JFrame{
 					delete();
 				}catch(Exception ex) {
 					new NoticeFrame("删除失败"+ex.getMessage());
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -139,7 +162,7 @@ public class GoodsFrame extends JFrame{
 					update();
 				}catch(Exception ex) {
 					new NoticeFrame("修改失败"+ex.getMessage());
-					
+					ex.printStackTrace();
 				}
 				break;
 			}
@@ -147,7 +170,12 @@ public class GoodsFrame extends JFrame{
 			case "导出":{
 				try {
 					path=AstMethod.openFile(FileDialog.SAVE);
-					LinkedList<Tranable> ls=(LinkedList<Tranable>)dao.queryAll();
+					LinkedList<Goods> ls=new LinkedList <Goods>();
+					ResultSet rs=dao.queryAll();
+					while(rs.next()) {
+						
+						ls.add(new Goods(rs.getString("gno"),rs.getString("sno"),rs.getString("gname"),rs.getString("simply"),rs.getDouble("price")));	
+					}
 					AstMethod.exportCSV(ls, path);
 					new NoticeFrame("导出成功");
 				}catch(Exception ex) {
@@ -156,18 +184,27 @@ public class GoodsFrame extends JFrame{
 					}
 					else
 						new NoticeFrame("导出错误"+ex.getMessage());
+						ex.printStackTrace();
+
 				}
 				break;
 			}
 			
 			}
+			
+			gnoText.setText("");
+			gnameText.setText("");
+			simplyText.setText("");
+			snoText.setText("");
+			priceText.setText("");
+			
 		}
 	}
 	
 	private int delete() throws Exception{
 		int n=table.getSelectedRow();
-		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
-		int i=dao.deleteOne(Goods);
+		Goods Goods=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),(double)(tableModel.getValueAt(n, 4)));
+		int i=dao.delete(Goods);
 		if(i==0) {
 			return i;
 		}
@@ -177,27 +214,34 @@ public class GoodsFrame extends JFrame{
 	private int insert() throws Exception{
 
 		Goods temp=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int n=dao.insertOne(temp);
+		int n=dao.insert(temp);
 		if(n==0) {
 			return n;
 		}
 		
 		tableModel.addRow(temp.tran());
+		gnoText.setText("");
+		gnameText.setText("");
+		simplyText.setText("");
+		snoText.setText("");
+		priceText.setText("");
+		
 		return n;
 	}
 	
 	private int update() throws Exception{
 		int n=table.getSelectedRow();
-		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),Double.valueOf((String)tableModel.getValueAt(n, 4)));
+//		Goods oldSupplier=new Goods((String)tableModel.getValueAt(n, 0),(String)tableModel.getValueAt(n, 1),(String)tableModel.getValueAt(n, 2),(String)tableModel.getValueAt(n, 3),((double)tableModel.getValueAt(n, 4)));
 		Goods newSupplier=new Goods(gnoText.getText(),snoText.getText(),gnameText.getText(),simplyText.getText(),Double.valueOf(priceText.getText()));
-		int temp= dao.updateOne(oldSupplier, newSupplier);
+		int temp= dao.update(newSupplier);
+		if(temp==0) {
+			return 0;
+		}
 		tableModel.removeRow(n);
 		
 		
 		tableModel.addRow(newSupplier.tran());
-		if(temp==0) {
-			return 0;
-		}
+		
 		return temp;
 	}
 	

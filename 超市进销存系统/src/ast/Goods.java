@@ -1,6 +1,6 @@
 package ast;
 
-public class Goods implements Tranable{
+public class Goods  {
 	private String  gno;
 	private String sno;
 	private String gname;
@@ -10,7 +10,7 @@ public class Goods implements Tranable{
 		setGno(a);setSno(b);setGname(c);setSimply(d);setPrice(e);
 	}
 	
-	@Override
+	
 	public Object[] tran() {
 		Object[] o=new Object[5];
 		o[0]=gno;o[1]=sno;o[2]=gname;o[3]=simply;o[4]=price;
@@ -48,5 +48,7 @@ public class Goods implements Tranable{
 	public void setPrice(double price) {
 		this.price = price;
 	}
+
+
 	
 }

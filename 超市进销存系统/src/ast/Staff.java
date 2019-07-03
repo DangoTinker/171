@@ -1,6 +1,6 @@
 package ast;
 
-public class Staff implements Tranable{
+public class Staff{
 	
 	private String stno;
 	private String stname;
@@ -52,7 +52,6 @@ public class Staff implements Tranable{
 	}
 
 
-	@Override
 	public Object[] tran() {
 		// TODO 自动生成的方法存根
 		Object[] o=new Object[6];
@@ -75,7 +74,8 @@ public class Staff implements Tranable{
 	public void setIcon(byte[] icon) {
 		this.icon = icon;
 	}
-	
-	
+
+
+
 	
 }

@@ -13,15 +13,18 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import DbOperation.LoginDao;
+import DbOperation.UserMessageImp;
+import ast.UserMessage;
 
 public class userAddFrame extends JFrame{
-	private LoginDao dao;
+	private static final long serialVersionUID = 1L;
+	private UserMessageImp dao;
 	private JRadioButton jradio;
-	private JTextField text1,text2,text3;
+	private JTextField text1,text2;
 	public userAddFrame() {
+		this.setTitle("添加用户");
 		try {
-			dao=LoginDao.getInstance();
+			dao=new UserMessageImp();
 		}catch(Exception e) {
 			new NoticeFrame("连接失败"+e.getMessage());
 		}
@@ -53,9 +56,9 @@ public class userAddFrame extends JFrame{
 	public void register() {
 		try {
 			if(!jradio.isSelected())
-				dao.Logup(text1.getText(), text2.getText(),"common");
+				dao.insert(new UserMessage(text1.getText(), text2.getText(),"common"));
 			else 
-				dao.Logup(text1.getText(), text2.getText(),"root");
+				dao.insert(new UserMessage(text1.getText(), text2.getText(),"root"));
 			dispose();
 			new NoticeFrame("注册成功");
 		}catch(Exception ex) {
